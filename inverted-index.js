@@ -4,15 +4,19 @@ exports.Index = function(){
   this.jsonForm =  {};
   this.wordIndex = [];
   this.collection = {};
+  this.jsonCollection = {};
   this.name = "";
 
   this.createIndex = function(filePath){
     var answer = true;
+    this.jsonForm = {};
+    this.wordIndex = [];
     if(fs.existsSync(filePath))
     {
       this.name = filePath.split("/").pop();
       var content = fs.readFileSync(filePath);
       this.jsonForm = JSON.parse(content);
+      this.jsonCollection[this.name] = this.jsonForm;
       if(this.jsonForm == undefined)
         answer = false;
       else
@@ -79,7 +83,7 @@ exports.Index = function(){
     }
     this.collection[this.name] = this.wordIndex;
 
-    console.log(this.collection);
+    //console.log(this.collection);
 
     return answer;
   };
@@ -91,7 +95,13 @@ exports.Index = function(){
     callback(null, jsonForm);
   };*/
 
-  this.getJsonForm = function(){
+  this.getJsonForm = function(file){
+    this.jsonForm = this.jsonCollection[file];
+    if(this.jsonCollection[file] == undefined)
+    {
+      console.log("Index Array for file \""+ file + "\" does not exist")
+      return undefined;
+    }
     if(this.jsonForm.length != 0)
     {
       return this.jsonForm;
@@ -103,7 +113,14 @@ exports.Index = function(){
     }
   };
 
-  this.getIndex = function(){
+  this.getIndex = function(file)
+  {
+    this.wordIndex = this.collection[file];
+    if(this.collection[file] == undefined)
+    {
+      console.log("Index Array for file \""+ file + "\" does not exist")
+      return undefined;
+    }
     if(this.wordIndex.length != 0)
     {
       return this.wordIndex;
@@ -113,10 +130,12 @@ exports.Index = function(){
       console.log("There is no Array of Indeces.");
       return undefined;
     }
+    //console.log(this.collection[file]);
   };
 
-  this.searchIndex = function(query, callback)
+  this.searchIndex = function(file, query, callback)
   {
+    this.wordIndex = this.collection[file];
     var indices = [];
     var found = false;
     console.log("Searching for \"" + query + "\"..... ");
@@ -159,7 +178,7 @@ exports.Index = function(){
     }
 
     if(found == false)
-    console.log("\"" + query + "\" was not found.");
+    console.log("\"" + query + "\" was not found. \n");
 
     callback(null, indices);
   };
