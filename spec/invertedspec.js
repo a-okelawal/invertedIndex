@@ -68,7 +68,7 @@ describe("GetIndex ", function(){
 
   describe("Search Array ", function(){
     it("should return array of indices.", function(){
-      var fullQuery = "of alice in wonder";
+      var fullQuery = "wonder glaxy is 2";
       var tokens  = fullQuery.split(" ");
       jsonForm = inv.getJsonForm(file);
       for(var j = 0; j < tokens.length; j++)
@@ -79,8 +79,6 @@ describe("GetIndex ", function(){
           //console.log(dataIndex.toString());
           expect(jsonData).toBeDefined();
           //console.log(dataIndex[0]);
-          if(dataIndex.length > 0)
-          {
             for(var i = 0; i < dataIndex.length; i++)
             {
               var tempIndex = dataIndex[i];
@@ -90,13 +88,8 @@ describe("GetIndex ", function(){
                 //console.log(index[0] + " : " + item);
                 var comboText = jsonForm[index[0]].title.toString().toLowerCase() + " " + jsonForm[index[0]].text.toString().toLowerCase();
                 expect(comboText.indexOf(query)).toBeDefined();
-                expect(comboText.indexOf(query)).not.toEqual(0);
               }
             }
-          }
-          else {
-            console.log("\"" + fullQuery + "\" was not found.");
-          }
         });
       }
     });
