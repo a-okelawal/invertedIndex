@@ -1,20 +1,20 @@
-var invIndex = require('../inverted-index.js');
-var inv = new invIndex.Index();
+var invIndexScript = require('../inverted-index.js');
+var invObject = new invIndexScript.WordIndexFactory();
 var file = "movies.json";
 var jsonData = [];
 var jsonForm = {};
 
 describe("Read Book Data ", function(){
   it("should not be empty.", function(){
-    var check = inv.createIndex("jasmine/books.json");
-    inv.createIndex("jasmine/movies.json");
+    var check = invObject.createIndex("jasmine/books.json");
+    invObject.createIndex("jasmine/movies.json");
     expect(check).toBe(true);
   });
 });
 
 describe("GetIndex ", function(){
   it("should not be undefined.", function(){
-    jsonData = inv.getIndex(file);
+    jsonData = invObject.getIndex(file);
     //console.log(jsonData);
     expect(jsonData).toBeDefined();
     expect(jsonData.length).toBeDefined();
@@ -27,27 +27,9 @@ describe("GetIndex ", function(){
   });
 });
 
-/*inv.loadJSON(function(err, data)
-{
-  var jsonData = data;
-  var indexArray = [];
-  describe("Read book data ", function(){
-    it("should not be empty.", function(){
-      //console.log(jsonData.length);
-      expect(data).toBeDefined();
-      expect(data.length).not.toBe(0);
-      //console.log(data.toString());
-      for(var t = 0; t < data.length; t++)
-      {
-        expect(Object.keys(data[0]).length).toBeGreaterThan(0);
-        break;
-      }
-    });
-  });*/
-
   describe("Populate Index ", function(){
     it("should have index.", function(){
-      jsonForm = inv.getJsonForm(file);
+      jsonForm = invObject.getJsonForm(file);
       expect(jsonForm).toBeDefined();
       expect(jsonForm.length).toBeGreaterThan(0);
       //console.log(jsonData);
@@ -69,8 +51,8 @@ describe("GetIndex ", function(){
   describe("Search Array ", function(){
     it("should return array of indices.", function(){
       var fullQuery = [[["create", "talk"], ["wonder" , "galaxy"]] , ["the" , "2"]];
-      jsonForm = inv.getJsonForm(file);
-        inv.searchIndex(file, fullQuery, function(err, dataIndex){
+      jsonForm = invObject.getJsonForm(file);
+        invObject.searchIndex(file, fullQuery, function(err, dataIndex){
           //console.log(dataIndex.toString());
           expect(jsonData).toBeDefined();
           //console.log(dataIndex[0]);

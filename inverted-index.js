@@ -1,6 +1,12 @@
 var fs = require('fs');
 
-exports.Index = function(){
+/*
+  Function to create a word index array out of json files
+*/
+exports.WordIndexFactory = function(){
+  /*
+    Global variables for this function
+  */
   this.jsonForm =  {};
   this.wordIndex = [];
   this.collection = {};
@@ -8,6 +14,9 @@ exports.Index = function(){
   this.name = "";
   var tempSearch = [];
 
+  /*
+    Function to create the wordIndex from the file
+  */
   this.createIndex = function(filePath){
     var answer = true;
     this.jsonForm = {};
@@ -24,52 +33,43 @@ exports.Index = function(){
       {
         for(var i = 0; i < this.jsonForm.length; i++)
         {
-          //console.log(jsonForm[i].title);
           if(this.jsonForm[i].title != undefined || this.jsonForm[i].text != undefined)
           {
-            var comboText = this.jsonForm[i].title.toString().toLowerCase() + " " + this.jsonForm[i].text.toString().toLowerCase();
-            //console.log(comboText);
-
+            var comboText = this.jsonForm[i].title.toString().toLowerCase() + " " +
+            this.jsonForm[i].text.toString().toLowerCase();
             var tokens = comboText.split(" ");
             for(var j = 0; j < tokens.length; j++)
             {
               var temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
               var check = true;
-              //console.log(temp);
-              if(i == 0 && j == 0)
+              if(i === 0 && j === 0)
               {
                 var obj = {};
                 obj[temp] = [i];
                 this.wordIndex.push(obj);
-                //console.log(temp + " - " + i);
               }
               else
               {
                 for(var key of this.wordIndex)
                 {
-                  //console.log(key.toString());
                   for(var element in key)
                   {
-                    //console.log(temp + " - " + element);
-                    if(element == temp)
+                    if(element === temp)
                     {
                       check = false;
-                      if(key[element].toString().indexOf(i.toString()) == -1)
+                      if(key[element].toString().indexOf(i.toString()) === -1)
                       {
-                        //console.log(key[element].toString().indexOf(i.toString()));
                         key[element].push(i);
-                        //console.log(key[element].toString());
                       }
                     }
                   }
                 }
-                if(check == true)
+                if(check === true)
                 {
-                  //console.log(temp + " - " + wordIndex[i][temp]);
                   var obj = {};
                   obj[temp] = [i];
                   this.wordIndex.push(obj);
-                } //end of if(check == true)
+                } //end of if(check === true)
               } //end of else
             } //end of j for
           } //end of title and body check
@@ -83,19 +83,12 @@ exports.Index = function(){
       answer = false;
     }
     this.collection[this.name] = this.wordIndex;
-
-    //console.log(this.collection);
-
     return answer;
   };
 
-/*
-  this.loadJSON = function(callback){
-    var content = fs.readFileSync("jasmine/books.json");
-    var jsonForm = JSON.parse(content);
-    callback(null, jsonForm);
-  };*/
-
+  /*
+    Function to return the jsonForm of the files
+  */
   this.getJsonForm = function(file){
     this.jsonForm = this.jsonCollection[file];
     if(this.jsonCollection[file] == undefined)
@@ -103,7 +96,7 @@ exports.Index = function(){
       console.log("Index Array for file \""+ file + "\" does not exist")
       return undefined;
     }
-    if(this.jsonForm.length != 0)
+    if(this.jsonForm.length !== 0)
     {
       return this.jsonForm;
     }
@@ -114,6 +107,9 @@ exports.Index = function(){
     }
   };
 
+  /*
+    Function to return word index of the files
+  */
   this.getIndex = function(file)
   {
     this.wordIndex = this.collection[file];
@@ -122,7 +118,7 @@ exports.Index = function(){
       console.log("Index Array for file \""+ file + "\" does not exist")
       return undefined;
     }
-    if(this.wordIndex.length != 0)
+    if(this.wordIndex.length !== 0)
     {
       return this.wordIndex;
     }
@@ -131,9 +127,11 @@ exports.Index = function(){
       console.log("There is no Array of Indeces.");
       return undefined;
     }
-    //console.log(this.collection[file]);
   };
 
+  /*
+    Function to search through created word indices
+  */
   this.searchIndex = function(file, fullQuery, callback)
   {
     this.wordIndex = this.collection[file];
@@ -145,7 +143,6 @@ exports.Index = function(){
     else if(Array.isArray(fullQuery))
     {
       var tokens = convertArray(fullQuery);
-      //console.log(tokens);
     }
     else
     {
@@ -161,15 +158,16 @@ exports.Index = function(){
       {
         for(var item in this.wordIndex[j])
           {
-            if(item == query)
+            if(item === query)
             {
               found = true;
               indices = this.wordIndex[j][item];
               //console.log(indices);
               //console.log(indices[1]);
-              if(this.wordIndex[j][item].length == 1)
+              if(this.wordIndex[j][item].length === 1)
               {
-                console.log("Found \"" + query + "\" in JSON object " + this.wordIndex[j][item] + "\n");
+                console.log("Found \"" + query + "\" in JSON object " + this.wordIndex[j][item]
+                + "\n");
               }
               if(this.wordIndex[j][item].length > 1)
               {
@@ -180,7 +178,7 @@ exports.Index = function(){
                   {
                     full += "and " + indices[k];
                   }
-                  else if(k == this.wordIndex[j][item].length - 2)
+                  else if(k === this.wordIndex[j][item].length - 2)
                   {
                     full += indices[k] + " ";
                   }
@@ -194,22 +192,21 @@ exports.Index = function(){
           }
         }
 
-        if(found == false)
+        if(found === false)
         console.log("\"" + query + "\" was not found. \n");
       }
     callback(null, indices);
   };
 
+  /*
+    Function to flatten multiple arrays into one array
+  */
   function convertArray(value)
   {
-    //console.log("This is " + value.toString());
-    //console.log(Array.isArray("Talker"));
     if(Array.isArray(value))
     {
-      //console.log(value.length);
       for(var q = 0; q < value.length; q++)
       {
-        //console.log("Still entered " + value);
         convertArray(value[q]);
       }
     }
