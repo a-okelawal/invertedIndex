@@ -6,6 +6,7 @@ exports.Index = function(){
   this.collection = {};
   this.jsonCollection = {};
   this.name = "";
+  var tempSearch = [];
 
   this.createIndex = function(filePath){
     var answer = true;
@@ -73,12 +74,12 @@ exports.Index = function(){
             } //end of j for
           } //end of title and body check
         } //end of i for
-        console.log("Word Index Created.")
+        console.log("Word Index for " + this.name +" Created.\n")
       } //end of else
     } //end of file check
     else
     {
-      console.log("File does not exist.");
+      console.log("File does not exist.\n");
       answer = false;
     }
     this.collection[this.name] = this.wordIndex;
@@ -133,53 +134,89 @@ exports.Index = function(){
     //console.log(this.collection[file]);
   };
 
-  this.searchIndex = function(file, query, callback)
+  this.searchIndex = function(file, fullQuery, callback)
   {
     this.wordIndex = this.collection[file];
     var indices = [];
     var found = false;
-    console.log("Searching for \"" + query + "\"..... ");
-
-    for(var j = 0; j< this.wordIndex.length;j++)
+    console.log(fullQuery);
+    if(typeof(fullQuery) === typeof("tolu"))
+    {var tokens  = fullQuery.split(" ");}
+    else if(Array.isArray(fullQuery))
     {
-      for(var item in this.wordIndex[j])
+      var tokens = convertArray(fullQuery);
+      //console.log(tokens);
+    }
+    else
+    {
+      console.log("Invalid input type. Please try again.");
+      return undefined;
+    }
+    for(var i = 0; i < tokens.length; i++)
+    {
+      var query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+      console.log("Searching for \"" + query + "\"..... ");
+
+      for(var j = 0; j< this.wordIndex.length;j++)
       {
-        if(item == query)
-        {
-          found = true;
-          indices = this.wordIndex[j][item];
-          //console.log(indices);
-          //console.log(indices[1]);
-          if(this.wordIndex[j][item].length == 1)
+        for(var item in this.wordIndex[j])
           {
-            console.log("Found \"" + query + "\" in JSON object " + this.wordIndex[j][item] + "\n");
-          }
-          if(this.wordIndex[j][item].length > 1)
-          {
-            var full = "";
-            for(var k = 0; k < this.wordIndex[j][item].length; k++)
+            if(item == query)
             {
-              if(k == this.wordIndex[j][item].length - 1)
+              found = true;
+              indices = this.wordIndex[j][item];
+              //console.log(indices);
+              //console.log(indices[1]);
+              if(this.wordIndex[j][item].length == 1)
               {
-                full += "and " + indices[k];
+                console.log("Found \"" + query + "\" in JSON object " + this.wordIndex[j][item] + "\n");
               }
-              else if(k == this.wordIndex[j][item].length - 2)
+              if(this.wordIndex[j][item].length > 1)
               {
-                full += indices[k] + " ";
-              }
-              else {
-                full += indices[k] + ", ";
+                var full = "";
+                for(var k = 0; k < this.wordIndex[j][item].length; k++)
+                {
+                  if(k == this.wordIndex[j][item].length - 1)
+                  {
+                    full += "and " + indices[k];
+                  }
+                  else if(k == this.wordIndex[j][item].length - 2)
+                  {
+                    full += indices[k] + " ";
+                  }
+                  else {
+                    full += indices[k] + ", ";
+                  }
+                }
+                console.log("Found \"" + query + "\" in JSON objects " + full + "\n");
               }
             }
-            console.log("Found \"" + query + "\" in JSON objects " + full + "\n");
           }
         }
+
+        if(found == false)
+        console.log("\"" + query + "\" was not found. \n");
+      }
+    callback(null, indices);
+  };
+
+  function convertArray(value)
+  {
+    //console.log("This is " + value.toString());
+    //console.log(Array.isArray("Talker"));
+    if(Array.isArray(value))
+    {
+      //console.log(value.length);
+      for(var q = 0; q < value.length; q++)
+      {
+        //console.log("Still entered " + value);
+        convertArray(value[q]);
       }
     }
-
-    if(found == false)
-    console.log("\"" + query + "\" was not found. \n");
-
-    callback(null, indices);
+    else
+    {
+      tempSearch.push(value);
+    }
+    return tempSearch;
   };
 }
