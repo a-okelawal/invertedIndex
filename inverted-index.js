@@ -12,47 +12,47 @@ exports.WordIndexFactory = function(){
   this.collection = {};
   this.jsonCollection = {};
   this.name = "";
-  var tempSearch = [];
+  let tempSearch = [];
 
   /*
     Function to create the wordIndex from the file
   */
   this.createIndex = function(filePath){
-    var answer = true;
+    let answer = true;
     this.jsonForm = {};
     this.wordIndex = [];
     if(fs.existsSync(filePath))
     {
       this.name = filePath.split("/").pop();
-      var content = fs.readFileSync(filePath);
+      let content = fs.readFileSync(filePath);
       this.jsonForm = JSON.parse(content);
       this.jsonCollection[this.name] = this.jsonForm;
       if(this.jsonForm == undefined)
         answer = false;
       else
       {
-        for(var i = 0; i < this.jsonForm.length; i++)
+        for(let i = 0; i < this.jsonForm.length; i++)
         {
           if(this.jsonForm[i].title != undefined || this.jsonForm[i].text != undefined)
           {
-            var comboText = this.jsonForm[i].title.toString().toLowerCase() + " " +
+            let comboText = this.jsonForm[i].title.toString().toLowerCase() + " " +
             this.jsonForm[i].text.toString().toLowerCase();
-            var tokens = comboText.split(" ");
-            for(var j = 0; j < tokens.length; j++)
+            let tokens = comboText.split(" ");
+            for(let j = 0; j < tokens.length; j++)
             {
-              var temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-              var check = true;
+              let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+              let check = true;
               if(i === 0 && j === 0)
               {
-                var obj = {};
+                let obj = {};
                 obj[temp] = [i];
                 this.wordIndex.push(obj);
               }
               else
               {
-                for(var key of this.wordIndex)
+                for(let key of this.wordIndex)
                 {
-                  for(var element in key)
+                  for(let element in key)
                   {
                     if(element === temp)
                     {
@@ -66,7 +66,7 @@ exports.WordIndexFactory = function(){
                 }
                 if(check === true)
                 {
-                  var obj = {};
+                  let obj = {};
                   obj[temp] = [i];
                   this.wordIndex.push(obj);
                 } //end of if(check === true)
@@ -135,8 +135,8 @@ exports.WordIndexFactory = function(){
   this.searchIndex = function(file, fullQuery, callback)
   {
     this.wordIndex = this.collection[file];
-    var indices = [];
-    var found = false;
+    let indices = [];
+    let found = false;
     console.log(fullQuery);
     if(typeof(fullQuery) === typeof("tolu"))
     {var tokens  = fullQuery.split(" ");}
@@ -149,14 +149,14 @@ exports.WordIndexFactory = function(){
       console.log("Invalid input type. Please try again.");
       return undefined;
     }
-    for(var i = 0; i < tokens.length; i++)
+    for(let i = 0; i < tokens.length; i++)
     {
-      var query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+      let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
       console.log("Searching for \"" + query + "\"..... ");
 
-      for(var j = 0; j< this.wordIndex.length;j++)
+      for(let j = 0; j< this.wordIndex.length;j++)
       {
-        for(var item in this.wordIndex[j])
+        for(let item in this.wordIndex[j])
           {
             if(item === query)
             {
@@ -171,8 +171,8 @@ exports.WordIndexFactory = function(){
               }
               if(this.wordIndex[j][item].length > 1)
               {
-                var full = "";
-                for(var k = 0; k < this.wordIndex[j][item].length; k++)
+                let full = "";
+                for(let k = 0; k < this.wordIndex[j][item].length; k++)
                 {
                   if(k == this.wordIndex[j][item].length - 1)
                   {
@@ -205,7 +205,7 @@ exports.WordIndexFactory = function(){
   {
     if(Array.isArray(value))
     {
-      for(var q = 0; q < value.length; q++)
+      for(let q = 0; q < value.length; q++)
       {
         convertArray(value[q]);
       }
