@@ -51,7 +51,7 @@ describe("GetIndex ", function(){
   describe("Search Array ", function(){
     it("should return array of indices.", function(){
       //let fullQuery = [[["create", "talk"], ["wonder" , "galaxy"]] , ["the" , "2"]];
-      let fullQuery = "The tribe that's next";
+      let fullQuery = "wonder kid strange";
       jsonForm = invObject.getJsonForm(file);
         invObject.searchIndex(file, fullQuery, function(err, dataIndex){
           //console.log(dataIndex.toString());

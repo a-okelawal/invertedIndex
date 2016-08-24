@@ -136,7 +136,6 @@ exports.WordIndexFactory = function(){
   {
     this.wordIndex = this.collection[file];
     let indices = [];
-    let found = false;
     console.log(fullQuery);
     if(typeof(fullQuery) === typeof("tolu"))
     {var tokens  = fullQuery.split(" ");}
@@ -151,6 +150,7 @@ exports.WordIndexFactory = function(){
     }
     for(let i = 0; i < tokens.length; i++)
     {
+      let found = false;
       let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
       console.log("Searching for \"" + query + "\"..... ");
 
