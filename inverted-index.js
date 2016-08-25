@@ -90,7 +90,10 @@ exports.WordIndexFactory = function(){
     Function to return the jsonForm of the files
   */
   this.getJsonForm = function(file){
+    if(file == undefined)
+    return this.jsonCollection[this.jsonCollection.length - 1];
     this.jsonForm = this.jsonCollection[file];
+    //console.log("Checking " + this.jsonCollection[file]);
     if(this.jsonCollection[file] == undefined)
     {
       console.log("Index Array for file \""+ file + "\" does not exist")
@@ -112,6 +115,8 @@ exports.WordIndexFactory = function(){
   */
   this.getIndex = function(file)
   {
+    if(file == undefined)
+    return this.collection[this.collection.length - 1];
     this.wordIndex = this.collection[file];
     if(this.collection[file] == undefined)
     {

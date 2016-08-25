@@ -1,34 +1,49 @@
 var invIndexScript = require('../inverted-index.js');
+var fs = require('fs');
 var invObject = new invIndexScript.WordIndexFactory();
-var file = "movies.json";
+var fullFilePath = "jasmine/movies.json";
+var file = fullFilePath.split("/").pop();
 var jsonData = [];
 var jsonForm = {};
 
 describe("Read Book Data ", function(){
   it("should not be empty.", function(){
+    invObject.createIndex(fullFilePath);
     let check = invObject.createIndex("jasmine/books.json");
-    invObject.createIndex("jasmine/movies.json");
+    let tempJsonArray = invObject.getJsonForm("books.json");
     expect(check).toBe(true);
-  });
-});
-
-describe("GetIndex ", function(){
-  it("should not be undefined.", function(){
-    jsonData = invObject.getIndex(file);
-    //console.log(jsonData);
-    expect(jsonData).toBeDefined();
-    expect(jsonData.length).toBeDefined();
-    expect(jsonData.length).not.toBe(0);
-    for(let t = 0; t < jsonData.length; t++)
+    for(let tempObj in tempJsonArray)
     {
-      expect(Object.keys(jsonData[0]).length).toBeGreaterThan(0);
-      break;
+      //console.log(tempObj);
+      //console.log(tempJsonArray[tempObj]);
+      expect(typeof(tempJsonArray[tempObj].title)).toBe(typeof("title"));
+      expect(typeof(tempJsonArray[tempObj].text)).toBe(typeof("title"));
     }
   });
 });
 
+describe("GetIndex", function(){
+  it(" ensure argument returns index location.", function(){
+    expect(invObject.getIndex("books.json")).toBeDefined();
+    expect(invObject.getIndex("books.json")).not.toBe(invObject.getIndex("movies.json"));
+  });
+});
+
   describe("Populate Index ", function(){
-    it("should have index.", function(){
+    it("should return index array.", function(){
+      jsonData = invObject.getIndex(file);
+      //console.log(jsonData);
+      expect(jsonData).toBeDefined();
+      expect(jsonData.length).toBeDefined();
+      expect(jsonData.length).not.toBe(0);
+      for(let t = 0; t < jsonData.length; t++)
+      {
+        expect(Object.keys(jsonData[0]).length).toBeGreaterThan(0);
+        break;
+      }
+    });
+
+    it("should ensure index is correct.", function(){
       jsonForm = invObject.getJsonForm(file);
       expect(jsonForm).toBeDefined();
       expect(jsonForm.length).toBeGreaterThan(0);
@@ -45,6 +60,14 @@ describe("GetIndex ", function(){
           let comboText = jsonForm[index[0]].title.toString().toLowerCase() + " " + jsonForm[index[0]].text.toString().toLowerCase();
           expect(comboText.indexOf(item)).not.toEqual(-1);
         }
+    });
+
+    it("should ensure index is not overwritten.", function(){
+      //invObject.createIndex("jasmine/books.json");
+      //invObject.createIndex("jasmine/movies.json");
+      expect(invObject.getIndex("books.json")).toBeDefined();
+      expect(invObject.getIndex("movies.json")).toBeDefined();
+
     });
   });
 
