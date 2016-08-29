@@ -24,8 +24,6 @@ describe("Read Book Data ", function(){
     expect(check).toBe(true);
     for(let tempObj in tempJsonArray)
     {
-      //console.log(tempObj);
-      //console.log(tempJsonArray[tempObj]);
       expect(typeof(tempJsonArray[tempObj].title)).toBe(typeof("title"));
       expect(typeof(tempJsonArray[tempObj].text)).toBe(typeof("title"));
     }
