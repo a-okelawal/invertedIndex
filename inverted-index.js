@@ -183,7 +183,7 @@ exports.WordIndexFactory = function(){
     //Check if the query is an array, if so, flatten into a 1 level array.
     else if(Array.isArray(fullQuery))
     {
-      var tokens = convertArray(fullQuery);
+      var tokens = flattenArray(fullQuery);
     }
     else
     {
@@ -247,13 +247,13 @@ exports.WordIndexFactory = function(){
   };
 
   //Function to flatten multiple arrays into one array
-  function convertArray(value)
+  function flattenArray(value)
   {
     if(Array.isArray(value))
     {
       for(let q = 0; q < value.length; q++)
       {
-        convertArray(value[q]);
+        flattenArray(value[q]);
       }
     }
     else
