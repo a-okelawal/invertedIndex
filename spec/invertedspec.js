@@ -24,6 +24,8 @@ describe("Read Book Data ", function(){
     expect(check).toBe(true);
     for(let tempObj in tempJsonArray)
     {
+      //console.log(tempObj);
+      //console.log(tempJsonArray[tempObj]);
       expect(typeof(tempJsonArray[tempObj].title)).toBe(typeof("title"));
       expect(typeof(tempJsonArray[tempObj].text)).toBe(typeof("title"));
     }
@@ -95,7 +97,8 @@ describe("Search Array ", function(){
           {
             let tempIndex = dataIndex[i];
             for(let item in jsonData[tempIndex])
-            {pIndex][item];
+            {
+              let index = jsonData[tempIndex][item];
               //console.log(index[0] + " : " + item);
               let comboText = jsonForm[index[0]].title.toString().toLowerCase() + " " + jsonForm[index[0]].text.toString().toLowerCase();
               expect(comboText.indexOf(fullQuery)).toBeDefined();
