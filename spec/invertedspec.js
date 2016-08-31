@@ -24,8 +24,6 @@ describe("Read Book Data ", function(){
     expect(check).toBe(true);
     for(let tempObj in tempJsonArray)
     {
-      //console.log(tempObj);
-      //console.log(tempJsonArray[tempObj]);
       expect(typeof(tempJsonArray[tempObj].title)).toBe(typeof("title"));
       expect(typeof(tempJsonArray[tempObj].text)).toBe(typeof("title"));
     }
@@ -44,7 +42,6 @@ describe("GetIndex", function(){
 describe("Populate Index ", function(){
   it("should return index array.", function(){
     jsonData = invObject.getIndex(file);
-    //console.log(jsonData);
     expect(jsonData).toBeDefined();
     expect(jsonData.length).toBeDefined();
     expect(jsonData.length).not.toBe(0);
@@ -59,10 +56,8 @@ describe("Populate Index ", function(){
     jsonForm = invObject.getJsonForm(file);
     expect(jsonForm).toBeDefined();
     expect(jsonForm.length).toBeGreaterThan(0);
-    //console.log(jsonData);
     for(let i = 0; i < jsonData.length; i++)
     {
-      //console.log(jsonForm[i].title.toString());
       expect(jsonData[i].toString()).toBeDefined();
       expect(jsonData[i].toString().length).toBeGreaterThan(0);
     }
@@ -75,8 +70,6 @@ describe("Populate Index ", function(){
   });
 
   it("should ensure index is not overwritten.", function(){
-    //invObject.createIndex("jasmine/books.json");
-    //invObject.createIndex("jasmine/movies.json");
     expect(invObject.getIndex("books.json")).toBeDefined();
     expect(invObject.getIndex("movies.json")).toBeDefined();
 
@@ -89,21 +82,18 @@ describe("Search Array ", function(){
     //let fullQuery = [[["create", "talk"], ["wonder" , "galaxy"]] , ["the" , "2"]];
     let fullQuery = "wonder kid strange";
     jsonForm = invObject.getJsonForm(file);
-      invObject.searchIndex(file, fullQuery, function(err, dataIndex){
-        //console.log(dataIndex.toString());
-        expect(jsonData).toBeDefined();
-        //console.log(dataIndex[0]);
-          for(let i = 0; i < dataIndex.length; i++)
+    invObject.searchIndex(file, fullQuery, function(err, dataIndex){
+      expect(jsonData).toBeDefined();
+        for(let i = 0; i < dataIndex.length; i++)
+        {
+          let tempIndex = dataIndex[i];
+          for(let item in jsonData[tempIndex])
           {
-            let tempIndex = dataIndex[i];
-            for(let item in jsonData[tempIndex])
-            {
-              let index = jsonData[tempIndex][item];
-              //console.log(index[0] + " : " + item);
-              let comboText = jsonForm[index[0]].title.toString().toLowerCase() + " " + jsonForm[index[0]].text.toString().toLowerCase();
-              expect(comboText.indexOf(fullQuery)).toBeDefined();
-            }
+            let index = jsonData[tempIndex][item];
+            let comboText = jsonForm[index[0]].title.toString().toLowerCase() + " " + jsonForm[index[0]].text.toString().toLowerCase();
+            expect(comboText.indexOf(fullQuery)).toBeDefined();
           }
+      }  
     });
   });
 });
