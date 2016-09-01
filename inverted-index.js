@@ -21,9 +21,27 @@ exports.WordIndexFactory = function(){
   //Temporary array to store search results
   let tempSearch = [];
 
+  //Variable for story array of words after splitting
+  let tokens = [];
+
+  //Temporary Variable to use for each word in the token array
+  let temp = "";
+
+  //Vaiable to check if word exists.
+  let check = true;
+
+  //Variable for temporary json objects
+  let obj = {};
+
+  //Variable string to use for search result
+  let full = "";
+
+  //Variable for combining strings in the json object
+  let comboText = "";
+
   //Function to create the wordIndex from the file
   this.createIndex = function(filePath){
-    let answer = true;
+    var answer = typeof this.jsonForm === 'undefined' ? false : true;
     this.jsonForm = {};
     this.wordIndex = [];
 
@@ -38,70 +56,62 @@ exports.WordIndexFactory = function(){
       //stores json object with the name
       this.jsonCollection[this.name] = this.jsonForm;
 
-      //check if the json object is empty
-      if(this.jsonForm == undefined)
-        answer = false;
-      else
+      for(let i = 0; i < this.jsonForm.length; i++)
       {
-        //Go through each json object
-        for(let i = 0; i < this.jsonForm.length; i++)
+        if(typeof this.jsonForm[i].title != 'undefined' || typeof this.jsonForm[i].text != 'undefined')
         {
-          if(this.jsonForm[i].title != undefined || this.jsonForm[i].text != undefined)
-          {
-            //combine the strings in the object
-            let comboText = this.jsonForm[i].title.toString().toLowerCase() + " " +
-            this.jsonForm[i].text.toString().toLowerCase();
+          //combine the strings in the object
+          comboText = `${this.jsonForm[i].title.toString().toLowerCase()}
+          ${this.jsonForm[i].text.toString().toLowerCase()}`;
 
-            //Split all the words and put them into an array
-            let tokens = comboText.split(" ");
-            for(let j = 0; j < tokens.length; j++)
+          //Split all the words and put them into an array
+          tokens = comboText.split(" ");
+          for(let j = 0; j < tokens.length; j++)
+          {
+            temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+            check = true;
+            //Check if it's the first iteration and put the first word
+            if(i === 0 && j === 0)
             {
-              let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-              let check = true;
-              //Check if it's the first iteration and put the first word
-              if(i === 0 && j === 0)
+              obj = {};
+              obj[temp] = [i];
+              this.wordIndex.push(obj);
+            }
+            else
+            {
+              /*
+              *Check if element exists and if it does, just add the index to the file else add
+              *the word and the index.
+              */
+              for(let key of this.wordIndex)
               {
-                let obj = {};
-                obj[temp] = [i];
-                this.wordIndex.push(obj);
-              }
-              else
-              {
-                /*
-                *Check if element exists and if it does, just add the index to the file else add
-                *the word and the index.
-                */
-                for(let key of this.wordIndex)
+                for(let element in key)
                 {
-                  for(let element in key)
+                  if(element === temp)
                   {
-                    if(element === temp)
+                    check = false;
+                    if(key[element].toString().indexOf(i.toString()) === -1)
                     {
-                      check = false;
-                      if(key[element].toString().indexOf(i.toString()) === -1)
-                      {
-                        key[element].push(i);
-                      }
+                      key[element].push(i);
                     }
                   }
                 }
-                if(check === true)
-                {
-                  let obj = {};
-                  obj[temp] = [i];
-                  this.wordIndex.push(obj);
-                }
+              }
+              if(check)
+              {
+                obj = {};
+                obj[temp] = [i];
+                this.wordIndex.push(obj);
               }
             }
           }
         }
-        console.log("Word Index for " + this.name +" Created.\n")
       }
+      console.log(`Word Index for "${this.name}" Created.\n`)
     }
     else
     {
       console.log("File does not exist.\n");
-      answer = false;
     }
 
     //Add word index array to the collection using the name of the file
@@ -113,17 +123,17 @@ exports.WordIndexFactory = function(){
   this.getJsonForm = function(file)
   {
     //Check if argument is empty, if it so return last json object.
-    if(file == undefined)
+    if(typeof file == 'undefined')
     return this.jsonCollection[this.jsonCollection.length - 1];
 
     //Get index from argument and get json object
     this.jsonForm = this.jsonCollection[file];
 
     //Check if the json object with the name exists
-    if(this.jsonCollection[file] == undefined)
+    if(typeof this.jsonCollection[file] == 'undefined')
     {
-      console.log("Index Array for file \""+ file + "\" does not exist")
-      return undefined;
+      console.log(`Index Array for file "${file}" does not exist`)
+      return;
     }
     if(this.jsonForm.length !== 0)
     {
@@ -132,7 +142,7 @@ exports.WordIndexFactory = function(){
     else
     {
       console.log("There is no Array of Indeces.");
-      return undefined;
+      return;
     }
   };
 
@@ -140,17 +150,17 @@ exports.WordIndexFactory = function(){
   this.getIndex = function(file)
   {
     //Check if argument is empty, if it so return last word index array.
-    if(file == undefined)
+    if(typeof file === 'undefined')
     return this.collection[this.collection.length - 1];
 
     //Get index from argument and get the word index array
     this.wordIndex = this.collection[file];
 
     //Check if the word index with the name exists
-    if(this.collection[file] == undefined)
+    if(typeof this.collection[file] === 'undefined')
     {
-      console.log("Index Array for file \""+ file + "\" does not exist")
-      return undefined;
+      console.log(`Index Array for file "${file}" does not exist`)
+      return;
     }
     if(this.wordIndex.length !== 0)
     {
@@ -159,7 +169,7 @@ exports.WordIndexFactory = function(){
     else
     {
       console.log("There is no Array of Indeces.");
-      return undefined;
+      return;
     }
   };
 
@@ -167,28 +177,29 @@ exports.WordIndexFactory = function(){
   this.searchIndex = function(file, fullQuery, callback)
   {
     //Check if argument is empty, if it so return last word index array.
-    if(file == undefined)
+    if(typeof file === 'undefined')
     this.wordIndex = this.collection[this.collection.length - 1];
 
     //Retrieve the array index with the file name
     this.wordIndex = this.collection[file];
+
+    if(typeof this.wordIndex === 'undefined')
+    return;
 
     //Variable to hold result
     let indices = [];
 
     //Check if the query is a string, if so split the words into an array.
     if(typeof(fullQuery) === typeof("tolu"))
-    {var tokens  = fullQuery.split(" ");}
+    {tokens  = fullQuery.split(" ");}
 
     //Check if the query is an array, if so, flatten into a 1 level array.
     else if(Array.isArray(fullQuery))
-    {
-      var tokens = flattenArray(fullQuery);
-    }
+    {tokens = flattenArray(fullQuery);}
     else
     {
       console.log("Invalid input type. Please try again.");
-      return undefined;
+      return;
     }
 
     //Loop through the array
@@ -196,7 +207,7 @@ exports.WordIndexFactory = function(){
     {
       let found = false;
       let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-      console.log("Searching for \"" + query + "\"..... ");
+      console.log(`Searching for "${query}"..... `);
 
       /*
       *Loop through the the word index array, compare words and add array of
@@ -212,34 +223,33 @@ exports.WordIndexFactory = function(){
               indices = this.wordIndex[j][item];
               if(this.wordIndex[j][item].length === 1)
               {
-                console.log("Found \"" + query + "\" in JSON object " + this.wordIndex[j][item]
-                + "\n");
+                console.log(`Found "${query}" in JSON object ${this.wordIndex[j][item]}\n`);
               }
               if(this.wordIndex[j][item].length > 1)
               {
-                let full = "";
+                full = "";
                 for(let k = 0; k < this.wordIndex[j][item].length; k++)
                 {
-                  if(k == this.wordIndex[j][item].length - 1)
+                  if(k === this.wordIndex[j][item].length - 1)
                   {
-                    full += "and " + indices[k];
+                    full += `and ${indices[k]}`;
                   }
                   else if(k === this.wordIndex[j][item].length - 2)
                   {
-                    full += indices[k] + " ";
+                    full += `${indices[k]} `;
                   }
                   else {
-                    full += indices[k] + ", ";
+                    full += `${indices[k]}, `;
                   }
                 }
-                console.log("Found \"" + query + "\" in JSON objects " + full + "\n");
+                console.log(`Found "${query}" in JSON objects ${full} \n`);
               }
             }
           }
         }
 
-        if(found === false)
-        console.log("\"" + query + "\" was not found. \n");
+        if(!found)
+        console.log(`"${query}" was not found. \n`);
       }
 
     //Return the array of inicies.
