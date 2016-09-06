@@ -46,11 +46,10 @@ exports.WordIndexFactory = function(){
     this.wordIndex = [];
 
     //Check if file exists
-    if(fs.existsSync(filePath))
-    {
+    if(fs.existsSync(filePath)) { //Correct this
       //Stores the name of the file and converst to json form
       this.name = filePath.split("/").pop();
-      let content = fs.readFileSync(filePath);
+      let content = fs.readFileSync(filePath);//Read asynchronous
       this.jsonForm = JSON.parse(content);
 
       //stores json object with the name
