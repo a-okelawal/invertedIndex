@@ -1,11 +1,10 @@
-/* jshint strict: true */
+"use strict";
 
 //Require the inverted index file and the file system library
 var invIndexScript = require('../inverted-index.js');
 var fs = require('fs');
 
-//Instance of the function invIndexScript
-var invObject = new invIndexScript.WordIndexFactory();
+var invObject = new invIndexScript();
 
 //Test path
 var fullFilePath = "jasmine/movies.json";
