@@ -3,12 +3,10 @@
 class invIndexScript {
 
   constructor() {
-    //Variable for combining strings in the json object
-    this.combo = "Tester";
-    //Variable that contains the  current index's json form
-    this.jsonObject =  {};
     //Variable that contains the current index's word index array
     this.wordIndex = [];
+    //Variable that contains the  current index's json form
+    this.jsonObject =  {};
     ////Variable Array that contains the word index array of all files
     this.collection = {};
     //Variable that contains the json forms of all files
@@ -32,7 +30,8 @@ class invIndexScript {
     //Check if file exists
     if(this.fs.existsSync(filePath)) { //Correct this
       //Stores the name of the file and converst to json form
-      this.name = filePath.split("/").pop();
+      //this.name = filePath.split("/").pop();
+      this.name = filePath;
       let content = this.fs.readFileSync(filePath);//Read asynchronous
       this.jsonObject = JSON.parse(content);
       if(this.jsonObject.length <= 0) {
@@ -45,7 +44,7 @@ class invIndexScript {
 
       for(let i = 0; i < this.jsonObject.length; i++) {
         if(typeof this.jsonObject[i].title !== 'undefined' || typeof this.jsonObject[i].text !== 'undefined') {
-          if(typeof this.jsonObject[i].title !== typeof ("test") || this.jsonObject[i].text !== typeof ("test")) {
+          if(typeof this.jsonObject[i].title !== 'string' || typeof this.jsonObject[i].text !== 'string') {
             throw new Error ("The object is not a string.");
           }
           /*
@@ -89,10 +88,10 @@ class invIndexScript {
           }
         }
       }
-      console.log(`Word Index for "${this.name}" Created.\n`);
+      console.log (`Word Index for "${this.name}" Created.\n`);
     }
     else{
-      throw new Error("File does not exist.");
+      throw new Error ("File does not exist.");
     }
 
     //Add word index array to the collection using the name of the file
@@ -103,46 +102,44 @@ class invIndexScript {
   //Function to return the jsonObject of the files
   getjsonObject(file) {
     //Check if argument is empty, if it so return last json object.
-    if(typeof file == 'undefined') {
-      return this.jsonCollection[this.jsonCollection.length - 1];}
+    if(typeof file === 'undefined') {
+      return this.jsonCollection[this.jsonCollection.length - 1];
+    }
 
     //Get index from argument and get json object
     this.jsonObject = this.jsonCollection[file];
 
     //Check if the json object with the name exists
     if(typeof this.jsonCollection[file] === 'undefined') {
-      console.log(`Index Array for file "${file}" does not exist`);
-      return;
+      throw new Error(`Index Array for file "${file}" does not exist`);
     }
     if(this.jsonObject.length !== 0) {
       return this.jsonObject;
     }
     else{
-      console.log("There is no Array of Indeces.");
-      return;
+      throw new Error("There is no Array of Indeces.");
     }
   }
 
   //Function to return word index of the files
   getIndex(file) {
-    //Check if argument is empty, if it so return last word index array.
+    //Check if argument is empty, if it is, throw an error.
     if(typeof file === 'undefined') {
-      return this.collection[this.collection.length - 1];}
+      throw new Error ("Please specify name of file.");
+    }
 
     //Get index from argument and get the word index array
     this.wordIndex = this.collection[file];
 
     //Check if the word index with the name exists
     if(typeof this.collection[file] === 'undefined') {
-      console.log(`Index Array for file "${file}" does not exist`);
-      return;
+      throw new Error(`Index Array for file "${file}" does not exist`);
     }
     if(this.wordIndex.length !== 0) {
       return this.wordIndex;
     }
     else{
-      console.log("There is no Array of Indeces.");
-      return;
+      throw new Error("Location does not exist.");
     }
   }
 
