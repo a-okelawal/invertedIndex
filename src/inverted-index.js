@@ -1,11 +1,12 @@
 "use strict";
-var fs = require('fs');
-
 //Function to create a word index array out of json files
-module.exports = class WordIndexFactory {
+class invIndexScript {
+
   constructor() {
+    //Variable for combining strings in the json object
+    this.combo = "Tester";
     //Variable that contains the  current index's json form
-    this.jsonForm =  {};
+    this.jsonObject =  {};
     //Variable that contains the current index's word index array
     this.wordIndex = [];
     ////Variable Array that contains the word index array of all files
@@ -16,51 +17,51 @@ module.exports = class WordIndexFactory {
     this.name = "";
     //Temporary array to store search results
     this.tempSearch = [];
-    //Variable for story array of words after splitting
-    this.tokens = [];
     //Temporary Variable to use for each word in the token array
     this.temp = "";
-    //Vaiable to check if word exists.
-    this.check = true;
-    //Variable for temporary json objects
-    this.obj = {};
     //Variable string to use for search result
     this.full = "";
-    //Variable for combining strings in the json object
-    this.comboText = "";
+
+    this.fs = require('fs');
   }
 
 
   //Function to create the wordIndex from the file
   createIndex(filePath) {
-    var answer = typeof this.jsonForm === 'undefined' ? false : true;
-    this.jsonForm = {};
-    this.wordIndex = [];
 
     //Check if file exists
-    if(fs.existsSync(filePath)) { //Correct this
+    if(this.fs.existsSync(filePath)) { //Correct this
       //Stores the name of the file and converst to json form
       this.name = filePath.split("/").pop();
-      let content = fs.readFileSync(filePath);//Read asynchronous
-      this.jsonForm = JSON.parse(content);
+      let content = this.fs.readFileSync(filePath);//Read asynchronous
+      this.jsonObject = JSON.parse(content);
+      if(this.jsonObject.length <= 0) {
+        throw new Error ("The file is empty");
+      }
 
       //stores json object with the name
-      this.jsonCollection[this.name] = this.jsonForm;
+      this.jsonCollection[this.name] = this.jsonObject;
+      let tmpArr = Object.keys(this.jsonObject);
 
-      for(let i = 0; i < this.jsonForm.length; i++) {
-        if(typeof this.jsonForm[i].title != 'undefined' || typeof this.jsonForm[i].text != 'undefined') {
-          //combine the strings in the object
-          comboText = `${this.jsonForm[i].title.toString().toLowerCase()}
-          ${this.jsonForm[i].text.toString().toLowerCase()}`;
+      for(let i = 0; i < this.jsonObject.length; i++) {
+        if(typeof this.jsonObject[i].title !== 'undefined' || typeof this.jsonObject[i].text !== 'undefined') {
+          if(typeof this.jsonObject[i].title !== typeof ("test") || this.jsonObject[i].text !== typeof ("test")) {
+            throw new Error ("The object is not a string.");
+          }
+          /*
+           *combine the strings in the object and
+           *split all the words and put them into an array
+          */
+          let tokens = `${this.jsonObject[i].title.toString().toLowerCase()}
+          ${this.jsonObject[i].text.toString().toLowerCase()}`.split(" ");
 
-          //Split all the words and put them into an array
-          tokens = comboText.split(" ");
+          let obj = {};
+
           for(let j = 0; j < tokens.length; j++) {
-            temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-            check = true;
+            let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+            let check = true;
             //Check if it's the first iteration and put the first word
             if(i === 0 && j === 0) {
-              obj = {};
               obj[temp] = [i];
               this.wordIndex.push(obj);
             }
@@ -80,10 +81,8 @@ module.exports = class WordIndexFactory {
                 }
               }
               if(check) {
-                obj = {
-                  temp: [i]
-                };
-                //obj[temp] = [i];
+                obj = {};
+                obj[temp] = [i];
                 this.wordIndex.push(obj);
               }
             }
@@ -93,30 +92,30 @@ module.exports = class WordIndexFactory {
       console.log(`Word Index for "${this.name}" Created.\n`);
     }
     else{
-      console.log("File does not exist.\n");
+      throw new Error("File does not exist.");
     }
 
     //Add word index array to the collection using the name of the file
     this.collection[this.name] = this.wordIndex;
-    return answer;
+    return this.wordIndex;
   }
 
-  //Function to return the jsonForm of the files
-  getJsonForm(file) {
+  //Function to return the jsonObject of the files
+  getjsonObject(file) {
     //Check if argument is empty, if it so return last json object.
     if(typeof file == 'undefined') {
       return this.jsonCollection[this.jsonCollection.length - 1];}
 
     //Get index from argument and get json object
-    this.jsonForm = this.jsonCollection[file];
+    this.jsonObject = this.jsonCollection[file];
 
     //Check if the json object with the name exists
-    if(typeof this.jsonCollection[file] == 'undefined') {
+    if(typeof this.jsonCollection[file] === 'undefined') {
       console.log(`Index Array for file "${file}" does not exist`);
       return;
     }
-    if(this.jsonForm.length !== 0) {
-      return this.jsonForm;
+    if(this.jsonObject.length !== 0) {
+      return this.jsonObject;
     }
     else{
       console.log("There is no Array of Indeces.");
@@ -232,3 +231,5 @@ module.exports = class WordIndexFactory {
     return tempSearch;
   }
 }
+
+module.exports = invIndexScript;
