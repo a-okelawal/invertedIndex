@@ -1,13 +1,13 @@
 "use strict";
 
 //Require the inverted index file and the file system library
-var invIndexScript = require('../inverted-index.js');
+var invIndexScript = require('../src/inverted-index.js');
 var fs = require('fs');
 
 var invObject = new invIndexScript();
 
 //Test path
-var fullFilePath = "jasmine/movies.json";
+var fullFilePath = "files/movies.json";
 
 //Test name
 var file = fullFilePath.split("/").pop();
@@ -20,18 +20,34 @@ var jsonForm = {};
 let comboText = "";
 
 //Variable to hold array of indices for words in the Array Index
-let index = [];
+let index;
 
 //Suite to test if book data is empty
-describe("Read Book Data ", function() {
-  it("should not be empty.", function() {
-    invObject.createIndex(fullFilePath);
-    let check = invObject.createIndex("jasmine/books.json");
-    let tempJsonArray = invObject.getJsonForm("books.json");
-    expect(check).toBe(true);
-    for(let tempObj in tempJsonArray) {
-      expect(typeof(tempJsonArray[tempObj].title)).toBe(typeof("title"));
-      expect(typeof(tempJsonArray[tempObj].text)).toBe(typeof("title"));
+describe("Read Book Data:", function() {
+  it("file should exist.", function() {
+    try {
+      //index = invObject.createIndex("jasmine/books.json");
+      index = invObject.createIndex("files/books.json");
+      expect(index).toBeDefined();
+    }
+    catch(e) {
+      console.log(e.message);
+    }
+  });
+
+  it("file should contain json objects that contain strings.", function() {
+    expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
+    try {
+      for(let tempObj in invObject.jsonObject) {
+        console.log("Title is: " + invObject.jsonObject[tempObj].title);
+        expect(invObject.jsonObject[tempObj].title).toBeDefined();
+        expect(typeof(invObject.jsonObject[tempObj].title)).toBe(typeof("title"));
+        expect(invObject.jsonObject[tempObj].text).toBeDefined();
+        expect(typeof(invObject.jsonObject[tempObj].text)).toBe(typeof("title"));
+      }
+    }
+    catch (e) {
+      console.log(e.message);
     }
   });
 });
