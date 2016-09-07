@@ -43,7 +43,6 @@ describe("Read Book Data:", function() {
     expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
     try {
       for(let tempObj in invObject.jsonObject) {
-        console.log("Title is: " + invObject.jsonObject[tempObj].title);
         expect(invObject.jsonObject[tempObj].title).toBeDefined();
         expect(typeof(invObject.jsonObject[tempObj].title)).toBe(typeof("title"));
         expect(invObject.jsonObject[tempObj].text).toBeDefined();
@@ -58,9 +57,17 @@ describe("Read Book Data:", function() {
 
 //Suite to test if the getIndex() function returns the word index array.
 describe("GetIndex", function() {
-  it(" ensure argument returns index location.", function() {
-    expect(invObject.getIndex("books.json")).toBeDefined();
-    expect(invObject.getIndex("books.json")).not.toBe(invObject.getIndex("movies.json"));
+  it(" ensure argument returns index at the specified location.", function() {
+    try {
+      expect(invObject.getIndex()).toBeUndefined();
+      expect(invObject.createIndex("files/movies.json")).
+      toBe(invObject.getIndex("files/movies.json"));
+      expect(invObject.getIndex("files/movies.json")).
+      toBe(invObject.getIndex("files/books.json"));
+    }
+    catch (e) {
+      console.log(e.message);
+    }
   });
 });
 
@@ -90,8 +97,8 @@ describe("Populate Index ", function() {
       }
       for(let item in jsonData[0]) {
         index = jsonData[0][item];
-        comboText = jsonForm[index[0]].title.toString().toLowerCase()
-         + " " + jsonForm[index[0]].text.toString().toLowerCase();
+        comboText = jsonForm[index[0]].title.toString().toLowerCase() +
+        " " + jsonForm[index[0]].text.toString().toLowerCase();
         expect(comboText.indexOf(item)).not.toEqual(-1);
       }
     }
@@ -117,8 +124,8 @@ describe("Search Array ", function() {
           let tempIndex = dataIndex[i];
           for(let item in jsonData[tempIndex]) {
             index = jsonData[tempIndex][item];
-            comboText = jsonForm[index[0]].title.toString().toLowerCase()
-            + " " + jsonForm[index[0]].text.toString().toLowerCase();
+            comboText = jsonForm[index[0]].title.toString().toLowerCase() +
+            " " + jsonForm[index[0]].text.toString().toLowerCase();
             expect(comboText.indexOf(fullQuery)).toBeDefined();
           }
         }
