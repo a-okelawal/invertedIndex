@@ -35,7 +35,11 @@ describe("Read Book Data:", function() {
     }
   });
 
-  it("file should contain json objects that contain strings.", function() {
+  it("file should not be empty", function(){
+    expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
+  });
+
+  it("file should contain json objects that contain strings.", function(){
     expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
     try {
       for(let tempObj in invObject.jsonObject) {
