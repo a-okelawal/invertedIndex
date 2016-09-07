@@ -7,10 +7,10 @@ var fs = require('fs');
 var invObject = new invIndexScript();
 
 //Test path
-var fullFilePath = "files/movies.json";
+var fullFilePath = "files/music.json";
 
 //Test name
-var file = fullFilePath.split("/").pop();
+var file = fullFilePath;
 
 //Variables used for storing the ArrayData and for Storing the jsonForm
 var jsonData = [];
@@ -56,7 +56,7 @@ describe("Read Book Data:", function() {
 });
 
 //Suite to test if the getIndex() function returns the word index array.
-describe("GetIndex", function() {
+describe("GetIndex:", function() {
   it(" ensure argument returns index at the specified location.", function() {
     try {
       expect(invObject.getIndex()).toBeUndefined();
@@ -72,42 +72,49 @@ describe("GetIndex", function() {
 });
 
 //Suite to test if word index was created
-describe("Populate Index ", function() {
-  it("should return index array.", function() {
-    jsonData = invObject.getIndex(file);
-    expect(jsonData).toBeDefined();
-    if(typeof jsonData !== 'undefined') {
-      expect(jsonData.length).toBeDefined();
-      expect(jsonData.length).not.toBe(0);
-      for(let t = 0; t < jsonData.length; t++) {
-        expect(Object.keys(jsonData[0]).length).toBeGreaterThan(0);
+describe("Populate Index:", function() {
+  it("should ensure index array is created once file has been read.", function() {
+    try {
+      index = [];
+      index = invObject.createIndex('files/music.json');
+      expect(Array.isArray(index)).toBe(true);
+      for(let t = 0; t < index.length; t++) {
+        expect(Object.keys(index[t]).length).toBeGreaterThan(0);
         break;
       }
+    }
+    catch (e) {
+      console.log(e.message);
     }
   });
 
   it("should ensure index is correct.", function() {
-    jsonForm = invObject.getJsonForm(file);
-    if(typeof jsonForm !== 'undefined') {
+    try {
+      jsonForm = invObject.getJsonObject(file);
+      jsonData = invObject.getIndex(file);
+
       expect(jsonForm).toBeDefined();
-      expect(jsonForm.length).toBeGreaterThan(0);
+
       for(let i = 0; i < jsonData.length; i++) {
         expect(jsonData[i].toString()).toBeDefined();
-        expect(jsonData[i].toString().length).toBeGreaterThan(0);
+        for(let item in jsonData[i]) {
+          index = jsonData[i][item];
+          comboText = jsonForm[index[0]].title.toString().toLowerCase() +
+          " " + jsonForm[index[0]].text.toString().toLowerCase();
+          expect(comboText.indexOf(item)).not.toEqual(-1);
+        }
       }
-      for(let item in jsonData[0]) {
-        index = jsonData[0][item];
-        comboText = jsonForm[index[0]].title.toString().toLowerCase() +
-        " " + jsonForm[index[0]].text.toString().toLowerCase();
-        expect(comboText.indexOf(item)).not.toEqual(-1);
-      }
+    }
+    catch (e) {
+      console.log(e.message);
     }
   });
 
   it("should ensure index is not overwritten.", function() {
-    expect(invObject.getIndex("books.json")).toBeDefined();
-    expect(invObject.getIndex("movies.json")).toBeDefined();
-
+    expect(invObject.getIndex("files/books.json")).toBeDefined();
+    expect(invObject.getIndex("files/music.json")).toBeDefined();
+    expect(invObject.getIndex("files/books.json")).not.
+    toBe(invObject.getIndex("files/music.json"));
   });
 });
 

@@ -26,7 +26,8 @@ class invIndexScript {
 
   //Function to create the wordIndex from the file
   createIndex(filePath) {
-
+    this.wordIndex = [];
+    
     //Check if file exists
     if(this.fs.existsSync(filePath)) { //Correct this
       //Stores the name of the file and converst to json form
@@ -100,10 +101,10 @@ class invIndexScript {
   }
 
   //Function to return the jsonObject of the files
-  getjsonObject(file) {
-    //Check if argument is empty, if it so return last json object.
+  getJsonObject(file) {
+    //Check if argument is empty, if it so, throw an error.
     if(typeof file === 'undefined') {
-      return this.jsonCollection[this.jsonCollection.length - 1];
+      throw new Error("Please specify name of file.");
     }
 
     //Get index from argument and get json object
