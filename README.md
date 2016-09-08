@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/abisoye-andela/invertedIndex/badges/gpa.svg)](https://codeclimate.com/github/abisoye-andela/invertedIndex) [![Test Coverage](https://codeclimate.com/github/abisoye-andela/invertedIndex/badges/coverage.svg)](https://codeclimate.com/github/abisoye-andela/invertedIndex/coverage)
+
 # inverted-index
 This is a javascript library that runs on node, which takes in an array of json objects from a file path and converts the strings in the json objects into a word [inverted index](https://en.wikipedia.org/wiki/Inverted_index).
 
