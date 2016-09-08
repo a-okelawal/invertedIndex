@@ -23,55 +23,55 @@ let comboText = "";
 let index;
 
 //Suite to test if book data is empty
-describe ("Read Book Data:", function() {
-  it ("file should exist.", function() {
-    expect(function() {invObject.createIndex("fakefiles/fake.json");}).
+describe ("Read Book Data:", function () {
+  it ("file should exist.", function () {
+    expect(function () {invObject.createIndex("fakefiles/fake.json");}).
     toThrowError("File does not exist.");
   });
 
-  it ("file should not be empty", function() {
-    expect(function() { invObject.createIndex("files/emptyjson0.json"); }).
+  it ("file should not be empty", function () {
+    expect(function () { invObject.createIndex("files/emptyjson0.json"); }).
     toThrowError('The file is empty.');
   });
 
-  it ("file Array should not be empty", function() {
-    expect(function() { invObject.createIndex("files/emptyjson1.json"); }).
+  it ("file Array should not be empty", function () {
+    expect(function () { invObject.createIndex("files/emptyjson1.json"); }).
     toThrowError('The file Array is empty.');
   });
 
-  it ("file Array Object should not be empty", function() {
-    expect(function() { invObject.createIndex("files/emptyjson2.json"); }).
+  it ("file Array Object should not be empty", function () {
+    expect(function () { invObject.createIndex("files/emptyjson2.json"); }).
     toThrowError('The file Array Object is empty.');
   });
 
-  it ("file Array Object should contain strings.", function() {
-    expect(function() {invObject.createIndex("files/notStringJson.json");}).
+  it ("file Array Object should contain strings.", function () {
+    expect(function () {invObject.createIndex("files/notStringJson.json");}).
     toThrowError("The object is not a string.");
   });
 });
 
 //Suite to test if the getIndex() function returns the word index array.
-describe ("GetIndex:", function() {
-  it ("location should be specified.", function() {
-    expect(function() {invObject.getIndex();}).
+describe ("GetIndex:", function () {
+  it ("location should be specified.", function () {
+    expect(function () {invObject.getIndex();}).
     toThrowError("Location was not specified.");
   });
 
-  it ("location should exist.", function() {
-    expect(function() {invObject.getIndex("fakes/files.json");}).
+  it ("location should exist.", function () {
+    expect(function () {invObject.getIndex("fakes/files.json");}).
     toThrowError("File does not exist.");
   });
 });
 
 //Suite to test if word index was created
-describe ("Populate Index:", function() {
-  it ("should ensure index array is created once file has been read.", function() {
+describe ("Populate Index:", function () {
+  it ("should ensure index array is created once file has been read.", function () {
     try {
       index = [];
       index = invObject.createIndex('files/music.json');
       expect(Array.isArray(index)).toBe(true);
       for(let t = 0; t < index.length; t++) {
-        expect(Object.keys(index[t]).length).toBeGreaterThan(0);
+        expect(Object.keys(index[t]).length).toBeGreaterThan (0);
         break;
       }
     }
@@ -80,7 +80,7 @@ describe ("Populate Index:", function() {
     }
   });
 
-  it ("should ensure index is correct.", function() {
+  it ("should ensure index is correct.", function () {
     try {
       jsonForm = invObject.getJsonObject(file);
       jsonData = invObject.getIndex(file);
@@ -102,7 +102,7 @@ describe ("Populate Index:", function() {
     }
   });
 
-  it ("should ensure index is not overwritten.", function() {
+  it ("should ensure index is not overwritten.", function () {
     invObject.createIndex ("files/books.json");
     invObject.createIndex ("files/movies.json");
     expect (function () {invObject.getIndex("files/books.json");}).not.toThrow();
@@ -112,12 +112,23 @@ describe ("Populate Index:", function() {
 });
 
 //Suite to test if the search returns the proper results
-describe ("Search Array ", function() {
-  it ("should return array of indices.", function() {
+describe ("Search Array:", function () {
+
+  it ("should have a string or an array of terms as argument.", function () {
+    expect(function () {invObject.searchIndex({talker: "Talks too much"});}).
+    toThrowError("Invalid input type.");
+  });
+
+  it ("should not take long to execute.", function () {
+    expect(function () {invObject.searchIndex(["jon", ["song", ["Nf"]], ["jon", ["song", ["Nf"]]], ["jon", ["song", ["Nf"]]]]);}).not.
+    toThrowError("Search took too long.");
+  });
+
+  it ("should return correct array of indices.", function () {
     //fullQuery is the search query. It can be strings or array of strings
-    let fullQuery = "wonder kid strange";
-    jsonForm = invObject.getJsonForm(file);
-    invObject.searchIndex(file, fullQuery, function(err, dataIndex) {
+    let fullQuery = ["jon", ["song", ["Nf"]]];
+    jsonForm = invObject.getJsonObject("files/music.json");
+    invObject.searchIndex(fullQuery, function (err, dataIndex) {
       expect(jsonData).toBeDefined();
       if(typeof dataIndex !== 'undefined') {
         for(let i = 0; i < dataIndex.length; i++) {
