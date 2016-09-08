@@ -23,57 +23,49 @@ let comboText = "";
 let index;
 
 //Suite to test if book data is empty
-describe("Read Book Data:", function() {
-  it("file should exist.", function() {
-    try {
-      //index = invObject.createIndex("jasmine/books.json");
-      index = invObject.createIndex("files/books.json");
-      expect(index).toBeDefined();
-    }
-    catch(e) {
-      console.log(e.message);
-    }
+describe ("Read Book Data:", function() {
+  it ("file should exist.", function() {
+    expect(function() {invObject.createIndex("fakefiles/fake.json");}).
+    toThrowError("File does not exist.");
   });
 
-  it("file should not be empty", function(){
-    expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
+  it ("file should not be empty", function() {
+    expect(function() { invObject.createIndex("files/emptyjson0.json"); }).
+    toThrowError('The file is empty.');
   });
 
-  it("file should contain json objects that contain strings.", function(){
-    expect(Object.keys(invObject.jsonObject).length).toBeGreaterThan(0);
-    try {
-      for(let tempObj in invObject.jsonObject) {
-        expect(invObject.jsonObject[tempObj].title).toBeDefined();
-        expect(typeof(invObject.jsonObject[tempObj].title)).toBe(typeof("title"));
-        expect(invObject.jsonObject[tempObj].text).toBeDefined();
-        expect(typeof(invObject.jsonObject[tempObj].text)).toBe(typeof("title"));
-      }
-    }
-    catch (e) {
-      console.log(e.message);
-    }
+  it ("file Array should not be empty", function() {
+    expect(function() { invObject.createIndex("files/emptyjson1.json"); }).
+    toThrowError('The file Array is empty.');
+  });
+
+  it ("file Array Object should not be empty", function() {
+    expect(function() { invObject.createIndex("files/emptyjson2.json"); }).
+    toThrowError('The file Array Object is empty.');
+  });
+
+  it ("file Array Object should contain strings.", function() {
+    expect(function() {invObject.createIndex("files/notStringJson.json");}).
+    toThrowError("The object is not a string.");
   });
 });
 
 //Suite to test if the getIndex() function returns the word index array.
-describe("GetIndex:", function() {
-  it(" ensure argument returns index at the specified location.", function() {
-    try {
-      expect(invObject.getIndex()).toBeUndefined();
-      expect(invObject.createIndex("files/movies.json")).
-      toBe(invObject.getIndex("files/movies.json"));
-      expect(invObject.getIndex("files/movies.json")).
-      toBe(invObject.getIndex("files/books.json"));
-    }
-    catch (e) {
-      console.log(e.message);
-    }
+describe ("GetIndex:", function() {
+  it ("location should be specified.", function() {
+    expect(function() {invObject.getIndex();}).
+    toThrowError("Location was not specified.");
+  });
+
+  it ("location should exist.", function() {
+    expect(function() {invObject.getIndex("fakes/files.json");}).
+    toThrowError("File does not exist.");
   });
 });
 
 //Suite to test if word index was created
-describe("Populate Index:", function() {
-  it("should ensure index array is created once file has been read.", function() {
+describe ("Populate Index:", function() {
+  it ("should ensure index array is created once file has been read.", function() {
     try {
       index = [];
       index = invObject.createIndex('files/music.json');
@@ -88,7 +80,7 @@ describe("Populate Index:", function() {
     }
   });
 
-  it("should ensure index is correct.", function() {
+  it ("should ensure index is correct.", function() {
     try {
       jsonForm = invObject.getJsonObject(file);
       jsonData = invObject.getIndex(file);
@@ -106,21 +98,22 @@ describe("Populate Index:", function() {
       }
     }
     catch (e) {
-      console.log(e.message);
+      console.log (e.message);
     }
   });
 
-  it("should ensure index is not overwritten.", function() {
-    expect(invObject.getIndex("files/books.json")).toBeDefined();
-    expect(invObject.getIndex("files/music.json")).toBeDefined();
-    expect(invObject.getIndex("files/books.json")).not.
-    toBe(invObject.getIndex("files/music.json"));
+  it ("should ensure index is not overwritten.", function() {
+    invObject.createIndex ("files/books.json");
+    invObject.createIndex ("files/movies.json");
+    expect (function () {invObject.getIndex("files/books.json");}).not.toThrow();
+    expect (invObject.getIndex("files/books.json")).not.
+    toBe (invObject.getIndex("files/movies.json"));
   });
 });
 
 //Suite to test if the search returns the proper results
-describe("Search Array ", function() {
-  it("should return array of indices.", function() {
+describe ("Search Array ", function() {
+  it ("should return array of indices.", function() {
     //fullQuery is the search query. It can be strings or array of strings
     let fullQuery = "wonder kid strange";
     jsonForm = invObject.getJsonForm(file);

@@ -2,7 +2,7 @@
 //Function to create a word index array out of json files
 class invIndexScript {
 
-  constructor() {
+  constructor () {
     //Variable that contains the current index's word index array
     this.wordIndex = [];
     //Variable that contains the  current index's json form
@@ -25,27 +25,34 @@ class invIndexScript {
 
 
   //Function to create the wordIndex from the file
-  createIndex(filePath) {
+  createIndex (filePath) {
     this.wordIndex = [];
-    
+
     //Check if file exists
-    if(this.fs.existsSync(filePath)) { //Correct this
+    if (this.fs.existsSync(filePath)) { //Correct this
       //Stores the name of the file and converst to json form
-      //this.name = filePath.split("/").pop();
       this.name = filePath;
       let content = this.fs.readFileSync(filePath);//Read asynchronous
+      if (content.length <= 0) {
+        throw new Error ('The file is empty.');
+      }
+
       this.jsonObject = JSON.parse(content);
-      if(this.jsonObject.length <= 0) {
-        throw new Error ("The file is empty");
+      if (this.jsonObject.length <= 0) {
+        throw new Error ('The file Array is empty.');
+      }
+
+      if (Object.keys(this.jsonObject[0]).length <= 0) {
+        throw new Error ('The file Array Object is empty.');
       }
 
       //stores json object with the name
       this.jsonCollection[this.name] = this.jsonObject;
       let tmpArr = Object.keys(this.jsonObject);
 
-      for(let i = 0; i < this.jsonObject.length; i++) {
-        if(typeof this.jsonObject[i].title !== 'undefined' || typeof this.jsonObject[i].text !== 'undefined') {
-          if(typeof this.jsonObject[i].title !== 'string' || typeof this.jsonObject[i].text !== 'string') {
+      for (let i = 0; i < this.jsonObject.length; i++) {
+        if (typeof this.jsonObject[i].title !== 'undefined' || typeof this.jsonObject[i].text !== 'undefined') {
+          if (typeof this.jsonObject[i].title !== 'string' || typeof this.jsonObject[i].text !== 'string') {
             throw new Error ("The object is not a string.");
           }
           /*
@@ -57,30 +64,30 @@ class invIndexScript {
 
           let obj = {};
 
-          for(let j = 0; j < tokens.length; j++) {
+          for (let j = 0; j < tokens.length; j++) {
             let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
             let check = true;
             //Check if it's the first iteration and put the first word
-            if(i === 0 && j === 0) {
+            if (i === 0 && j === 0) {
               obj[temp] = [i];
               this.wordIndex.push(obj);
             }
-            else{
+            else {
               /*
               *Check if element exists and if it does, just add the index to the file else add
               *the word and the index.
               */
-              for(let key of this.wordIndex) {
-                for(let element in key) {
-                  if(element === temp) {
+              for (let key of this.wordIndex) {
+                for (let element in key) {
+                  if (element === temp) {
                     check = false;
-                    if(key[element].toString().indexOf(i.toString()) === -1) {
+                    if (key[element].toString().indexOf(i.toString()) === -1) {
                       key[element].push(i);
                     }
                   }
                 }
               }
-              if(check) {
+              if (check) {
                 obj = {};
                 obj[temp] = [i];
                 this.wordIndex.push(obj);
@@ -89,9 +96,9 @@ class invIndexScript {
           }
         }
       }
-      console.log (`Word Index for "${this.name}" Created.\n`);
+      //console.log (`Word Index for "${this.name}" Created.\n`);
     }
-    else{
+    else {
       throw new Error ("File does not exist.");
     }
 
@@ -101,78 +108,82 @@ class invIndexScript {
   }
 
   //Function to return the jsonObject of the files
-  getJsonObject(file) {
+  getJsonObject (file) {
     //Check if argument is empty, if it so, throw an error.
-    if(typeof file === 'undefined') {
-      throw new Error("Please specify name of file.");
+    if (typeof file === 'undefined') {
+      throw new Error("Location was not specified.");
     }
 
     //Get index from argument and get json object
     this.jsonObject = this.jsonCollection[file];
 
     //Check if the json object with the name exists
-    if(typeof this.jsonCollection[file] === 'undefined') {
+    if (typeof this.jsonCollection[file] === 'undefined') {
       throw new Error(`Index Array for file "${file}" does not exist`);
     }
-    if(this.jsonObject.length !== 0) {
+    if (this.jsonObject.length !== 0) {
       return this.jsonObject;
     }
-    else{
+    else {
       throw new Error("There is no Array of Indeces.");
     }
   }
 
   //Function to return word index of the files
-  getIndex(file) {
+  getIndex (file) {
     //Check if argument is empty, if it is, throw an error.
-    if(typeof file === 'undefined') {
-      throw new Error ("Please specify name of file.");
+    if (typeof file === 'undefined') {
+      throw new Error ("Location was not specified.");
     }
 
     //Get index from argument and get the word index array
     this.wordIndex = this.collection[file];
 
     //Check if the word index with the name exists
-    if(typeof this.collection[file] === 'undefined') {
-      throw new Error(`Index Array for file "${file}" does not exist`);
+    if (typeof this.collection[file] === 'undefined') {
+      throw new Error(`File does not exist.`);
     }
-    if(this.wordIndex.length !== 0) {
+    if (this.wordIndex.length !== 0) {
       return this.wordIndex;
     }
-    else{
-      throw new Error("Location does not exist.");
+    else {
+      throw new Error("Array is Empty.");
     }
   }
 
   //Function to search through created word indices
-  searchIndex(file, fullQuery, callback) {
+  searchIndex (fullQuery, callback) {
     //Check if argument is empty, if it so return last word index array.
-    if(typeof file === 'undefined') {
+    if (typeof file === 'undefined') {
       this.wordIndex = this.collection[this.collection.length - 1];}
 
     //Retrieve the array index with the file name
     this.wordIndex = this.collection[file];
 
-    if(typeof this.wordIndex === 'undefined') {
+    if (typeof this.wordIndex === 'undefined') {
       return;}
 
     //Variable to hold result
     let indices = [];
 
+    //Variable to hold the tokens
+    let tokens = [];
+
     //Check if the query is a string, if so split the words into an array.
-    if(typeof(fullQuery) === typeof("tolu")) {
-      tokens  = fullQuery.split(" ");}
+    if (typeof(fullQuery) === typeof("tolu")) {
+      tokens  = fullQuery.split(" ");
+    }
 
     //Check if the query is an array, if so, flatten into a 1 level array.
-    else if(Array.isArray(fullQuery)) {
-      tokens = flattenArray(fullQuery);}
-    else{
-      console.log("Invalid input type. Please try again.");
-      return;
+    else if (Array.isArray(fullQuery)) {
+      tokens = flattenArray(fullQuery);
+    }
+    else {
+      throw new Error("Invalid input type.");
     }
 
     //Loop through the array
-    for(let i = 0; i < tokens.length; i++) {
+    for (let i = 0; i < tokens.length; i++) {
       let found = false;
       let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
       console.log(`Searching for "${query}"..... `);
@@ -181,21 +192,21 @@ class invIndexScript {
       *Loop through the the word index array, compare words and add array of
       *indices from word index to the result array if found.
       */
-      for(let j = 0; j< this.wordIndex.length;j++) {
-        for(let item in this.wordIndex[j]) {
-            if(item === query) {
+      for (let j = 0; j< this.wordIndex.length;j++) {
+        for (let item in this.wordIndex[j]) {
+            if (item === query) {
               found = true;
               indices = this.wordIndex[j][item];
-              if(this.wordIndex[j][item].length === 1) {
+              if (this.wordIndex[j][item].length === 1) {
                 console.log(`Found "${query}" in JSON object ${this.wordIndex[j][item]}\n`);
               }
-              if(this.wordIndex[j][item].length > 1) {
+              if (this.wordIndex[j][item].length > 1) {
                 full = "";
-                for(let k = 0; k < this.wordIndex[j][item].length; k++) {
-                  if(k === this.wordIndex[j][item].length - 1) {
+                for (let k = 0; k < this.wordIndex[j][item].length; k++) {
+                  if (k === this.wordIndex[j][item].length - 1) {
                     full += `and ${indices[k]}`;
                   }
-                  else if(k === this.wordIndex[j][item].length - 2) {
+                  else if (k === this.wordIndex[j][item].length - 2) {
                     full += `${indices[k]} `;
                   }
                   else {
@@ -208,7 +219,7 @@ class invIndexScript {
           }
         }
 
-        if(!found) {
+        if (!found) {
         console.log(`"${query}" was not found. \n`);}
       }
 
@@ -217,13 +228,13 @@ class invIndexScript {
   }
 
   //Function to flatten multiple arrays into one array
-  flattenArray(value) {
-    if(Array.isArray(value)) {
-      for(let q = 0; q < value.length; q++) {
+  flattenArray (value) {
+    if (Array.isArray(value)) {
+      for (let q = 0; q < value.length; q++) {
         flattenArray(value[q]);
       }
     }
-    else{
+    else {
       tempSearch.push(value);
     }
     return tempSearch;
