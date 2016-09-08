@@ -157,7 +157,6 @@ class invIndexScript {
   searchIndex (fullQuery) {
     let pass = new Date();
     let now = pass.getTime()/1000;
-    console.log(now);
 
     //Variable to hold the tokens
     let tokens = [];
