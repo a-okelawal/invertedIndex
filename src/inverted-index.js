@@ -19,8 +19,10 @@ class invIndexScript {
     this.temp = "";
     //Variable string to use for search result
     this.full = "";
-
+    //Require File System module
     this.fs = require('fs');
+    //Require library module array from lodash
+    this.array = require('lodash/array');
   }
 
 
@@ -152,19 +154,10 @@ class invIndexScript {
   }
 
   //Function to search through created word indices
-  searchIndex (fullQuery, callback) {
-    //Check if argument is empty, if it so return last word index array.
-    if (typeof file === 'undefined') {
-      this.wordIndex = this.collection[this.collection.length - 1];}
-
-    //Retrieve the array index with the file name
-    this.wordIndex = this.collection[file];
-
-    if (typeof this.wordIndex === 'undefined') {
-      return;}
-
-    //Variable to hold result
-    let indices = [];
+  searchIndex (fullQuery) {
+    let pass = new Date();
+    let now = pass.getTime()/1000;
+    console.log(now);
 
     //Variable to hold the tokens
     let tokens = [];
@@ -176,68 +169,51 @@ class invIndexScript {
 
     //Check if the query is an array, if so, flatten into a 1 level array.
     else if (Array.isArray(fullQuery)) {
-      tokens = flattenArray(fullQuery);
+      tokens = this.array.flattenDepth(fullQuery, 1);
     }
     else {
       throw new Error("Invalid input type.");
     }
 
-    //Loop through the array
-    for (let i = 0; i < tokens.length; i++) {
-      let found = false;
-      let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-      console.log(`Searching for "${query}"..... `);
+    //Variable to hold results
+    let result = [];
 
-      /*
-      *Loop through the the word index array, compare words and add array of
-      *indices from word index to the result array if found.
-      */
-      for (let j = 0; j< this.wordIndex.length;j++) {
-        for (let item in this.wordIndex[j]) {
+    //Variable to hold the keys for the collection of word indices
+    let indices = Object.keys(this.collection);
+
+
+    //Looping through and searching for word
+    for (let z = 0; z < indices.length; z++) {
+
+      this.wordIndex = this.collection[indices[z]];
+      this.name = indices[z];
+
+      //Loop through the array
+      for (let i = 0; i < tokens.length; i++) {
+        let found = false;
+        let query = tokens[i].toString().replace(/[^a-zA-Z 0-9]+/g,'').toLowerCase();
+
+        /*
+        *Loop through the the word index array, compare words and add array of
+        *indices from word index to the result array if found.
+        */
+        for (let j = 0; j< this.wordIndex.length;j++) {
+          for (let item in this.wordIndex[j]) {
             if (item === query) {
-              found = true;
-              indices = this.wordIndex[j][item];
-              if (this.wordIndex[j][item].length === 1) {
-                console.log(`Found "${query}" in JSON object ${this.wordIndex[j][item]}\n`);
-              }
-              if (this.wordIndex[j][item].length > 1) {
-                full = "";
-                for (let k = 0; k < this.wordIndex[j][item].length; k++) {
-                  if (k === this.wordIndex[j][item].length - 1) {
-                    full += `and ${indices[k]}`;
-                  }
-                  else if (k === this.wordIndex[j][item].length - 2) {
-                    full += `${indices[k]} `;
-                  }
-                  else {
-                    full += `${indices[k]}, `;
-                  }
-                }
-                console.log(`Found "${query}" in JSON objects ${full} \n`);
-              }
+              result = this.wordIndex[j][item];
+              console.log(`${query} was found in ${this.name} in the objects ${this.wordIndex[j][item]}"\n`);
             }
           }
         }
-
-        if (!found) {
-        console.log(`"${query}" was not found. \n`);}
       }
+    }
+    let done = pass.getTime()/1000;
+    if ((done - now) > 0) {
+      throw new Error('Search took too long.');
+    }
 
     //Return the array of inicies.
-    callback(null, indices);
-  }
-
-  //Function to flatten multiple arrays into one array
-  flattenArray (value) {
-    if (Array.isArray(value)) {
-      for (let q = 0; q < value.length; q++) {
-        flattenArray(value[q]);
-      }
-    }
-    else {
-      tempSearch.push(value);
-    }
-    return tempSearch;
+    return result;
   }
 }
 
