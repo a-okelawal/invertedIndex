@@ -34,7 +34,7 @@ class invIndexScript {
     if (this.fs.existsSync(filePath)) { //Correct this
       this.name = filePath;
       //Stores the name of the file and converst to json form
-      this.jsonObject = getFile (filePath);
+      this.jsonObject = this.getFile (filePath);
       //stores json object with the name
       this.jsonCollection[this.name] = this.jsonObject;
       let tmpArr = Object.keys(this.jsonObject);
