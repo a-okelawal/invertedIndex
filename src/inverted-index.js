@@ -1,4 +1,7 @@
 "use strict";
+require('fs');
+require('lodash/array');
+
 //Function to create a word index array out of json files
 class invIndexScript {
 
@@ -45,31 +48,10 @@ class invIndexScript {
            *split all the words and put them into an array
           */
           let tokens = `${this.jsonObject[i].title.toString().toLowerCase()}
-          ${this.jsonObject[i].text.toString().toLowerCase()}`.split(" "),
-          obj = {};
+          ${this.jsonObject[i].text.toString().toLowerCase()}`.split(" ");
 
-          for (let j = 0; j < tokens.length; j++) {
-            let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,''), check = true;
-            /*
-            *Check if element exists and if it does, just add the index to the file else add
-            *the word and the index.
-            */
-            for (let key of this.wordIndex) {
-              for (let element in key) {
-                if (element === temp) {
-                  check = false;
-                  if (key[element].toString().indexOf(i.toString()) === -1) {
-                    key[element].push(i);
-                  }
-                }
-              }
-            }
-            if (check) {
-              obj = {};
-              obj[temp] = [i];
-              this.wordIndex.push(obj);
-            }
-          }
+          //Add words to the index
+          this.addToIndex(tokens, i);
         }
         else {
           throw new Error ("The object is not a string.");
@@ -205,6 +187,33 @@ class invIndexScript {
     }
 
     return temp;
+  }
+
+  addToIndex (tokens, i) {
+
+    for (let j = 0; j < tokens.length; j++) {
+      let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
+      let check = true;
+      let obj = {};
+      /*
+      *Check if element exists and if it does, just add the index to the file else add
+      *the word and the index.
+      */
+      for (let key of this.wordIndex) {
+        for (let element in key) {
+          if (element === temp) {
+            check = false;
+            if (key[element].toString().indexOf(i.toString()) === -1) {
+              key[element].push(i);
+            }
+          }
+        }
+      }
+      if (check) {
+        obj[temp] = [i];
+        this.wordIndex.push(obj);
+      }
+    }
   }
 }
 
