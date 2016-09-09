@@ -50,31 +50,24 @@ class invIndexScript {
 
           for (let j = 0; j < tokens.length; j++) {
             let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,''), check = true;
-            //Check if it's the first iteration and put the first word
-            if (i === 0 && j === 0) {
-              obj[temp] = [i];
-              this.wordIndex.push(obj);
-            }
-            else {
-              /*
-              *Check if element exists and if it does, just add the index to the file else add
-              *the word and the index.
-              */
-              for (let key of this.wordIndex) {
-                for (let element in key) {
-                  if (element === temp) {
-                    check = false;
-                    if (key[element].toString().indexOf(i.toString()) === -1) {
-                      key[element].push(i);
-                    }
+            /*
+            *Check if element exists and if it does, just add the index to the file else add
+            *the word and the index.
+            */
+            for (let key of this.wordIndex) {
+              for (let element in key) {
+                if (element === temp) {
+                  check = false;
+                  if (key[element].toString().indexOf(i.toString()) === -1) {
+                    key[element].push(i);
                   }
                 }
               }
-              if (check) {
-                obj = {};
-                obj[temp] = [i];
-                this.wordIndex.push(obj);
-              }
+            }
+            if (check) {
+              obj = {};
+              obj[temp] = [i];
+              this.wordIndex.push(obj);
             }
           }
         }
@@ -189,11 +182,9 @@ class invIndexScript {
         }
       }
     }
-    let done = pass.getTime()/1000;
-    if ((done - now) > 0) {
+    if (((pass.getTime()/1000) - now) > 0) {
       throw new Error('Search took too long.');
     }
-
     //Return the array of inicies.
     return result;
   }
