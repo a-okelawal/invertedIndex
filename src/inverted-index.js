@@ -39,7 +39,7 @@ class invIndexScript {
       let tmpArr = Object.keys(this.jsonObject);
 
       for (let i = 0; i < this.jsonObject.length; i++) {
-        if (typeof this.jsonObject[i].title === 'string' || typeof this.jsonObject[i].text === 'string') {
+        if (typeof this.jsonObject[i].title === 'string' && typeof this.jsonObject[i].text === 'string') {
           /*
            *combine the strings in the object and
            *split all the words and put them into an array
