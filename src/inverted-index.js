@@ -3,7 +3,7 @@
 class invIndexScript {
 
   constructor () {
-    //Variable that contains the current index's word index array
+    //wordIndex has current word index and jsonObject has current index's json form
     this.wordIndex = [];
     //Variable that contains the  current index's json form
     this.jsonObject =  {};
@@ -29,7 +29,6 @@ class invIndexScript {
   //Function to create the wordIndex from the file
   createIndex (filePath) {
     this.wordIndex = [];
-
     //Check if file exists
     if (this.fs.existsSync(filePath)) { //Correct this
       this.name = filePath;
@@ -40,22 +39,17 @@ class invIndexScript {
       let tmpArr = Object.keys(this.jsonObject);
 
       for (let i = 0; i < this.jsonObject.length; i++) {
-        if (typeof this.jsonObject[i].title !== 'undefined' || typeof this.jsonObject[i].text !== 'undefined') {
-          if (typeof this.jsonObject[i].title !== 'string' || typeof this.jsonObject[i].text !== 'string') {
-            throw new Error ("The object is not a string.");
-          }
+        if (typeof this.jsonObject[i].title === 'string' || typeof this.jsonObject[i].text === 'string') {
           /*
            *combine the strings in the object and
            *split all the words and put them into an array
           */
           let tokens = `${this.jsonObject[i].title.toString().toLowerCase()}
-          ${this.jsonObject[i].text.toString().toLowerCase()}`.split(" ");
-
-          let obj = {};
+          ${this.jsonObject[i].text.toString().toLowerCase()}`.split(" "),
+          obj = {};
 
           for (let j = 0; j < tokens.length; j++) {
-            let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
-            let check = true;
+            let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,''), check = true;
             //Check if it's the first iteration and put the first word
             if (i === 0 && j === 0) {
               obj[temp] = [i];
@@ -83,6 +77,9 @@ class invIndexScript {
               }
             }
           }
+        }
+        else {
+          throw new Error ("The object is not a string.");
         }
       }
     }
