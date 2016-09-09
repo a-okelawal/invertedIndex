@@ -201,11 +201,9 @@ class invIndexScript {
       */
       for (let key of this.wordIndex) {
         for (let element in key) {
-          if (element === temp) {
+          if (element === temp && key[element].toString().indexOf(i.toString()) === -1) {
             check = false;
-            if (key[element].toString().indexOf(i.toString()) === -1) {
-              key[element].push(i);
-            }
+            key[element].push(i);
           }
         }
       }
