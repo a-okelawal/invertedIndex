@@ -32,22 +32,9 @@ class invIndexScript {
 
     //Check if file exists
     if (this.fs.existsSync(filePath)) { //Correct this
-      //Stores the name of the file and converst to json form
       this.name = filePath;
-      let content = this.fs.readFileSync(filePath);//Read asynchronous
-      if (content.length <= 0) {
-        throw new Error ('The file is empty.');
-      }
-
-      this.jsonObject = JSON.parse(content);
-      if (this.jsonObject.length <= 0) {
-        throw new Error ('The file Array is empty.');
-      }
-
-      if (Object.keys(this.jsonObject[0]).length <= 0) {
-        throw new Error ('The file Array Object is empty.');
-      }
-
+      //Stores the name of the file and converst to json form
+      this.jsonObject = getFile (filePath);
       //stores json object with the name
       this.jsonCollection[this.name] = this.jsonObject;
       let tmpArr = Object.keys(this.jsonObject);
@@ -98,7 +85,6 @@ class invIndexScript {
           }
         }
       }
-      //console.log (`Word Index for "${this.name}" Created.\n`);
     }
     else {
       throw new Error ("File does not exist.");
@@ -213,6 +199,24 @@ class invIndexScript {
 
     //Return the array of inicies.
     return result;
+  }
+
+  getFile (path) {
+    let content = this.fs.readFileSync(path);//Read asynchronous
+    if (content.length <= 0) {
+      throw new Error ('The file is empty.');
+    }
+
+    let temp = JSON.parse(content);
+    if (temp.length <= 0) {
+      throw new Error ('The file Array is empty.');
+    }
+
+    if (Object.keys(temp[0]).length <= 0) {
+      throw new Error ('The file Array Object is empty.');
+    }
+
+    return temp;
   }
 }
 
