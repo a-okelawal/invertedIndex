@@ -1,6 +1,5 @@
 "use strict";
 require('fs');
-require('lodash/array');
 
 //Function to create a word index array out of json files
 class invIndexScript {
@@ -25,8 +24,6 @@ class invIndexScript {
     //Require File System module
     this.fs = require('fs');
     this.tempArray = [];
-    //Require library module array from lodash
-    this.array = require('lodash/array');
   }
 
 
@@ -215,8 +212,6 @@ class invIndexScript {
   tokenizer (fullQuery) {
 
     let tempToken = [];
-
-    console.log(fullQuery);
 
     //Check if the query is a string, if so split the words into an array.
     if (typeof(fullQuery) === typeof("tolu")) {
