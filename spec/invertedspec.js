@@ -122,7 +122,7 @@ describe ("Populate Index:", function () {
 describe ("Search Array:", function () {
 
   it ("should have a string or an array of terms as argument.", function () {
-    expect(function () {invObject.searchIndex({talker: "Talks too much"});}).
+    expect(function () {invObject.searchIndex({talker: "Talks too much"});}).not.
     toThrowError("Invalid input type.");
   });
 
