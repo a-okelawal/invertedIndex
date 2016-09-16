@@ -73,13 +73,14 @@ describe ("GetIndex:", function () {
 describe ("Populate Index:", function () {
   it ("should ensure index array is created once file has been read.", function () {
     try {
-      index = [];
-      index = invObject.createIndex('files/music.json');
+      invObject.createIndex('files/music.json');
+      expect(invObject.wordIndex).toBeDefined();
+
+      index = invObject.getIndex('files/music.json');
       expect(Array.isArray(index)).toBe(true);
-      for(let t = 0; t < index.length; t++) {
-        expect(Object.keys(index[t]).length).toBeGreaterThan (0);
-        break;
-      }
+
+      console.log(invObject.searchIndex("song"));
+      expect(invObject.searchIndex("song")).toEqual([0, 1, 2]);
     }
     catch (e) {
       console.log(e.message);
@@ -111,9 +112,9 @@ describe ("Populate Index:", function () {
   it ("should ensure index is not overwritten.", function () {
     invObject.createIndex ("files/books.json");
     invObject.createIndex ("files/movies.json");
-    expect (function () {invObject.getIndex("files/books.json");}).not.toThrow();
     expect (invObject.getIndex("files/books.json")).not.
     toBe (invObject.getIndex("files/movies.json"));
+    expect (function () {invObject.getIndex("files/books.json");}).not.toThrow();
   });
 });
 

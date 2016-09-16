@@ -64,7 +64,6 @@ class invIndexScript {
 
     //Add word index array to the collection using the name of the file
     this.collection[this.name] = this.wordIndex;
-    return this.wordIndex;
   }
 
   //Function to return the jsonObject of the files
