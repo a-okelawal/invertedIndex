@@ -24,6 +24,7 @@ class invIndexScript {
     this.full = "";
     //Require File System module
     this.fs = require('fs');
+    this.tempArray = [];
     //Require library module array from lodash
     this.array = require('lodash/array');
   }
@@ -111,32 +112,20 @@ class invIndexScript {
   }
 
   //Function to search through created word indices
-  searchIndex (fullQuery) {
+  searchIndex () {
     let pass = new Date();
     let now = pass.getTime()/1000;
 
     //Variable to hold the tokens
     let tokens = [];
 
-    //Check if the query is a string, if so split the words into an array.
-    if (typeof(fullQuery) === typeof("tolu")) {
-      tokens  = fullQuery.split(" ");
-    }
-
-    //Check if the query is an array, if so, flatten into a 1 level array.
-    else if (Array.isArray(fullQuery)) {
-      tokens = this.array.flattenDepth(fullQuery, 1);
-    }
-    else {
-      throw new Error("Invalid input type.");
-    }
+    tokens = this.tokenizer(arguments);
 
     //Variable to hold results
     let result = [];
 
     //Variable to hold the keys for the collection of word indices
     let indices = Object.keys(this.collection);
-
 
     //Looping through and searching for word
     for (let z = 0; z < indices.length; z++) {
@@ -155,9 +144,10 @@ class invIndexScript {
         */
         for (let j = 0; j< this.wordIndex.length;j++) {
           for (let item in this.wordIndex[j]) {
-            if (item === query) {
+            if (item === query && found === false) {
               result = this.wordIndex[j][item];
               console.log(`${query} was found in ${this.name} in the objects ${this.wordIndex[j][item]}"\n`);
+              found = true;
             }
           }
         }
@@ -220,6 +210,41 @@ class invIndexScript {
         this.wordIndex.push(obj);
       }
     }
+  }
+
+  tokenizer (fullQuery) {
+
+    let tempToken = [];
+
+    console.log(fullQuery);
+
+    //Check if the query is a string, if so split the words into an array.
+    if (typeof(fullQuery) === typeof("tolu")) {
+      tempToken  = fullQuery.split(" ");
+    }
+    //Check if the query is an array, if so, flatten into a 1 level array.
+    else {
+      //console.log(fullQuery);
+      tempToken = this.flatten(fullQuery);
+    }
+
+    //console.log(tempToken);
+    return tempToken;
+  }
+
+  flatten () {
+    for(let arg of arguments){
+     if( arg instanceof Object && typeof arg !== 'string' ) {
+       for(let item in arg){
+         if( arg.hasOwnProperty(item) ){
+           this.flatten(arg[item]);
+         }
+       }
+     }else{
+       this.tempArray.push(arg);
+     }
+   }
+   return this.tempArray;
   }
 }
 
