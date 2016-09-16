@@ -24,9 +24,15 @@ let index;
 
 //Suite to test if book data is empty
 describe ("Read Book Data:", function () {
+
   it ("file should exist.", function () {
     expect(function () {invObject.createIndex("fakefiles/fake.json");}).
     toThrowError("File does not exist.");
+  });
+
+  it ("file should contain an Array", function () {
+    expect(function () { invObject.createIndex("files/emptyjson3.json"); }).
+    toThrowError('The file does not contain an Array.');
   });
 
   it ("file should not be empty", function () {

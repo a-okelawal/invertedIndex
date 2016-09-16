@@ -172,12 +172,21 @@ class invIndexScript {
   }
 
   getFile (path) {
-    let content = this.fs.readFileSync(path);//Read asynchronous
+    let content = this.fs.readFileSync(path);
     if (content.length <= 0) {
       throw new Error ('The file is empty.');
     }
 
-    let temp = JSON.parse(content);
+    let temp = [];
+
+    try {
+      temp = JSON.parse(content);
+    }
+    catch (e) {
+      throw new Error ('The file does not contain an Array.');
+    }
+
+
     if (temp.length <= 0) {
       throw new Error ('The file Array is empty.');
     }
