@@ -50,7 +50,7 @@
     });
 
     it ('file Array Object should contain strings.', function () {
-      expect(function () { invObject.process(file, '[{"tolu": "talking to me", "Abi": "Talking to no one"}]'); }).
+      expect(function () { invObject.process(file, '[{"tolu": "talking to me", "Abi": 6}]'); }).
       toThrowError('The object is not a string.');
     });
   });
@@ -101,17 +101,16 @@
 
         expect(jsonForm).toBeDefined();
 
-        for(let i = 0; i < jsonData.length; i++) {
+        for (let i = 0; i < jsonData.length; i++) {
           expect(jsonData[i].toString()).toBeDefined();
-          for(let item in jsonData[i]) {
+          for (let item in jsonData[i]) {
             index = jsonData[i][item];
             comboText = jsonForm[index[0]].title.toString().toLowerCase() +
             ' ' + jsonForm[index[0]].text.toString().toLowerCase();
             expect(comboText.indexOf(item)).not.toEqual(-1);
           }
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.log (e.message);
       }
     });
@@ -125,7 +124,6 @@
 
   //Suite to test if the search returns the proper results
   describe ('Search Array:', function () {
-
     it ('should have a string or an array of terms as argument.', function () {
       expect(function () {invObject.searchIndex({talker: 'Talks too much'});}).not.
       toThrowError('Invalid input type.');
@@ -142,10 +140,10 @@
       jsonForm = invObject.getJsonObject('./files/music.json');
       invObject.searchIndex(fullQuery, function (err, dataIndex) {
         expect(jsonData).toBeDefined();
-        if(typeof dataIndex !== 'undefined') {
-          for(let i = 0; i < dataIndex.length; i++) {
+        if (typeof dataIndex !== 'undefined') {
+          for (let i = 0; i < dataIndex.length; i++) {
             let tempIndex = dataIndex[i];
-            for(let item in jsonData[tempIndex]) {
+            for (let item in jsonData[tempIndex]) {
               index = jsonData[tempIndex][item];
               comboText = jsonForm[index[0]].title.toString().toLowerCase() +
               ' ' + jsonForm[index[0]].text.toString().toLowerCase();

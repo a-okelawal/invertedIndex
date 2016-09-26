@@ -7,7 +7,7 @@
   //Function to create a word index array out of json files
   class invIndexScript {
 
-    constructor () {
+    constructor() {
       //wordIndex has current word index and jsonObject has current index's json form
       this.wordIndex = [];
       //Variable that contains the  current index's json form
@@ -28,7 +28,7 @@
 
 
     //Function to create the wordIndex from the file
-    createIndex (filePath, callback) {
+    createIndex(filePath, callback) {
 
       this.wordIndex = [];
       //Check if file exists
@@ -42,14 +42,13 @@
           this.collection[filePath] = this.process(filePath, data);
           callback(null, data);
         });
-      }
-      else {
+      } else {
         throw new Error ('File does not exist.');
       }
     }
 
     //Function to return the jsonObject of the files
-    getJsonObject (file) {
+    getJsonObject(file) {
       //Check if argument is empty, if it so, throw an error.
       if (typeof file === 'undefined') {
         throw new Error("Location was not specified.");
@@ -64,14 +63,13 @@
       }
       if (this.jsonObject.length) {
         return this.jsonObject;
-      }
-      else {
+      } else {
         throw new Error("There is no Array of Indeces.");
       }
     }
 
     //Function to return word index of the files
-    getIndex (file) {
+    getIndex(file) {
       //Check if argument is empty, if it is, throw an error.
       if (typeof file === 'undefined') {
         throw new Error ("Location was not specified.");
@@ -86,14 +84,13 @@
       }
       if (this.wordIndex.length) {
         return this.wordIndex;
-      }
-      else {
+      } else {
         throw new Error("Array is Empty.");
       }
     }
 
     //Function to search through created word indices
-    searchIndex () {
+    searchIndex() {
       let pass = new Date();
       let now = pass.getTime()/1000;
 
@@ -143,15 +140,14 @@
       return result;
     }
 
-    process (filePath, data) {
+    process(filePath, data) {
       if (data.length <= 0) {
         throw new Error ('The file is empty.');
       }
 
       try {
         data = JSON.parse(data);
-      }
-      catch (e) {
+      } catch (e) {
         throw new Error ('The file does not contain an Array.');
       }
 
@@ -176,19 +172,16 @@
 
           //Add words to the index
           this.addToIndex(tokens, i);
-        }
-        else {
+        } else {
           throw new Error ('The object is not a string.');
         }
       }
       //stores json object with the name
       this.jsonCollection[filePath] = data;
-
-
       return this.wordIndex;
     }
 
-    addToIndex (tokens, i) {
+    addToIndex(tokens, i) {
 
       for (let j = 0; j < tokens.length; j++) {
         let temp = tokens[j].toString().replace(/[^a-zA-Z 0-9]+/g,'');
@@ -213,23 +206,22 @@
       }
     }
 
-    tokenizer (fullQuery) {
+    tokenizer(fullQuery) {
 
       let tempToken = [];
 
-      //Check if the query is a string, if so split the words into an array.
+      //Check if the query is a string, if so split the words into an array
+      //else flatten into a 1 level array.
       if (typeof(fullQuery) === 'string') {
         tempToken  = fullQuery.split(" ");
-      }
-      //Check if the query is an array, if so, flatten into a 1 level array.
-      else {
+      } else {
         tempToken = this.flatten(fullQuery);
       }
 
       return tempToken;
     }
 
-    flatten () {
+    flatten() {
       for (let arg of arguments){
        if (arg instanceof Object && typeof arg !== 'string' ) {
          for (let item in arg){
@@ -237,8 +229,7 @@
              this.flatten(arg[item]);
            }
          }
-       }
-       else {
+       } else {
          this.tempArray.push(arg);
        }
      }
